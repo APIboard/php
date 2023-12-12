@@ -1,0 +1,35 @@
+{
+    "name": "apiboard/php",
+    "description": "A package to easily integrate APIboard into a PHP application.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "~8.1.0|~8.2.0",
+        "apiboard/php-openapi": "^1.0",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/log": "^2.0 || ^3.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "pestphp/pest": "^2.0",
+        "symfony/var-dumper": "^7.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apiboard\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "prefer-stable": true
+}
