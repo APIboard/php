@@ -2,7 +2,7 @@
 
 namespace Apiboard\OpenAPI;
 
-use APIboard\Api;
+use Apiboard\Api;
 use Apiboard\Checks\DeprecatedEndpoint;
 use Apiboard\Checks\DeprecatedHeaderParameter;
 use Apiboard\Checks\DeprecatedPathParameter;

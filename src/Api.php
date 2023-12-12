@@ -1,6 +1,6 @@
 <?php
 
-namespace APIboard;
+namespace Apiboard;
 
 use Apiboard\Checks\Check;
 use Apiboard\Logging\Logger;

@@ -7,7 +7,7 @@ use Closure;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class APIboard
+class Apiboard
 {
     protected array $apis;
 
