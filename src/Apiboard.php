@@ -31,9 +31,21 @@ class Apiboard
         return $this;
     }
 
+    public function enable(): self
+    {
+        $this->enabled = true;
+
+        return $this;
+    }
+
     public function isDisabled(): bool
     {
         return $this->enabled === false;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled === true;
     }
 
     public function runChecksUsing(Closure $callback): self
