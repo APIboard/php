@@ -85,7 +85,7 @@ function endpointMatcher(): EndpointMatcher
 {
     return new EndpointMatcher(
         ApiBuilder::new()
-            ->openapi(__DIR__ . '/__fixtures__/endpoint-matcher.json')
+            ->openapi(__DIR__.'/__fixtures__/endpoint-matcher.json')
             ->make(),
     );
 }
