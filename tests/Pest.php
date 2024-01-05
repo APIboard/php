@@ -35,7 +35,7 @@ class ArrayLogger implements LoggerInterface
                 'api' => $endpoint->api()->id(),
                 'operation' => [
                     'method' => $endpoint->method(),
-                    'uri' => $endpoint->uri(),
+                    'url' => $endpoint->url(),
                 ],
             ], $context),
         ]);

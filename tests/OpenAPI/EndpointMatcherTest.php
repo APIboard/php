@@ -17,7 +17,7 @@ it('can match request to endpoint for operation without path parameters', functi
 
     expect($result)->toBeInstanceOf(Endpoint::class);
     expect($result->method())->toBe('GET');
-    expect($result->uri())->toBe('/no-path-parameters');
+    expect($result->url())->toBe('/no-path-parameters');
 });
 
 it('can match request to endpoint for operation with a path parameter', function () {
@@ -30,7 +30,7 @@ it('can match request to endpoint for operation with a path parameter', function
 
     expect($result)->toBeInstanceOf(Endpoint::class);
     expect($result->method())->toBe('POST');
-    expect($result->uri())->toBe('/path/{parameter}');
+    expect($result->url())->toBe('/path/{parameter}');
 });
 
 it('can match request to endpoint for operation with a server for the path', function () {
@@ -43,7 +43,7 @@ it('can match request to endpoint for operation with a server for the path', fun
 
     expect($result)->toBeInstanceOf(Endpoint::class);
     expect($result->method())->toBe('GET');
-    expect($result->uri())->toBe('/prefix/path');
+    expect($result->url())->toBe('/prefix/path');
 });
 
 it('can match request to endpoint for operation with a server for the operation', function () {
@@ -56,7 +56,7 @@ it('can match request to endpoint for operation with a server for the operation'
 
     expect($result)->toBeInstanceOf(Endpoint::class);
     expect($result->method())->toBe('GET');
-    expect($result->uri())->toBe('/prefix/operation');
+    expect($result->url())->toBe('/prefix/operation');
 });
 
 it('does not match request to endpoint when no path can be matched', function () {
@@ -85,7 +85,7 @@ function endpointMatcher(): EndpointMatcher
 {
     return new EndpointMatcher(
         ApiBuilder::new()
-            ->openapi(__DIR__.'/__fixtures__/endpoint-matcher.json')
+            ->openapi(__DIR__ . '/__fixtures__/endpoint-matcher.json')
             ->make(),
     );
 }
