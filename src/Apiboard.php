@@ -3,6 +3,7 @@
 namespace Apiboard;
 
 use Apiboard\Checks\Check;
+use Apiboard\Logging\Sampler;
 use Closure;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -74,7 +75,7 @@ class Apiboard
             $api['apiboard_id'],
             $api['openapi'],
             $this->resolveLogger($api['channel'] ?? null),
-            $this->runChecksCallback,
+            $this->resolveSampledChecksRunner($api['sample_rate'] ?? 1),
         );
     }
 
@@ -87,5 +88,12 @@ class Apiboard
             is_string($logger) => $logResolver($logger),
             default => $logResolver(null),
         };
+    }
+
+    protected function resolveSampledChecksRunner(int|float $rate): Closure
+    {
+        $sampler = new Sampler($rate, $this->runChecksCallback);
+
+        return fn (Check $check) => $sampler->__invoke($check);
     }
 }
