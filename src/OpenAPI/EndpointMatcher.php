@@ -35,7 +35,7 @@ class EndpointMatcher
                 $request->getUri()
             );
 
-            $uriPattern = $this->parseToPath(parse_url($server?->url() ?? '/')['path'] ?? '') . $path->uri();
+            $uriPattern = $this->parseToPath(parse_url($server?->url() ?? '/')['path'] ?? '').$path->uri();
             $uriValue = $this->parseToPath($request->getUri()->getPath());
 
             $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $uriPattern);
@@ -72,6 +72,6 @@ class EndpointMatcher
             return $value;
         }
 
-        return '/' . trim($value, '/');
+        return '/'.trim($value, '/');
     }
 }
