@@ -21,7 +21,7 @@ class Apiboard
     public function __construct(array $apis)
     {
         $this->apis = $apis;
-        $this->runChecksCallback = fn (Check $check) => $check->__invoke();
+        $this->runChecksCallback = fn (Check ...$checks) => array_map(fn (Check $check) => $check->__invoke(), $checks);
         $this->logResolverCallback = fn () => new NullLogger();
     }
 
@@ -94,6 +94,6 @@ class Apiboard
     {
         $sampler = new Sampler($rate, $this->runChecksCallback);
 
-        return fn (Check $check) => $sampler->__invoke($check);
+        return fn (Check ...$checks) => $sampler->__invoke(...$checks);
     }
 }

@@ -56,10 +56,10 @@ class Api
     public function inspect(MessageInterface $message): void
     {
         if ($message instanceof RequestInterface) {
-            $endpoint = $this->matchingEndpoint($message);
+            $checks = $this->matchingEndpoint($message)->checksFor($message);
 
-            foreach ($endpoint?->checksFor($message) ?? [] as $check) {
-                $this->runCheck($check);
+            if ($checks) {
+                $this->runChecks(...$checks);
             }
         }
     }
@@ -71,8 +71,8 @@ class Api
         return $endpoint->matchingIn($request);
     }
 
-    protected function runCheck(Check $check): void
+    protected function runChecks(Check ...$checks): void
     {
-        ($this->checkRunner)($check);
+        ($this->checkRunner)(...$checks);
     }
 }
