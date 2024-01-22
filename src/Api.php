@@ -56,7 +56,7 @@ class Api
     public function inspect(MessageInterface $message): void
     {
         if ($message instanceof RequestInterface) {
-            $checks = $this->matchingEndpoint($message)->checksFor($message);
+            $checks = $this->matchingEndpoint($message)?->checksFor($message) ?? null;
 
             if ($checks) {
                 $this->runChecks(...$checks);
