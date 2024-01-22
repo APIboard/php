@@ -76,7 +76,7 @@ test('it sends the warning message correctly through http', function () {
         'message' => '::message::',
         'context' => [
             'some' => 'key!',
-        ]
+        ],
     ]));
 });
 
