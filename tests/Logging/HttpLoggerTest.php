@@ -59,7 +59,7 @@ test('it sends the warning message correctly through http', function () {
     $logger = HttpLoggerBuilder::new()->make($client);
 
     $logger->warning('::message::', [
-        'context' => 'key!',
+        'some' => 'key!',
     ]);
 
     expect($request)->toBeInstanceOf(RequestInterface::class);
@@ -71,6 +71,13 @@ test('it sends the warning message correctly through http', function () {
         'Accept' => ['application/json'],
         'Content-Type' => ['application/json'],
     ]);
+    expect($request->getBody()->getContents())->toEqual(json_encode([
+        'logged_at' => (new DateTime())->format('Y-m-d\TH:i:sP'),
+        'message' => '::message::',
+        'context' => [
+            'some' => 'key!',
+        ]
+    ]));
 });
 
 test('it throws an exception for unsupported log levels', function (string $level) {

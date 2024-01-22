@@ -3,6 +3,7 @@
 namespace Apiboard\Logging;
 
 use BadMethodCallException;
+use DateTime;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -75,10 +76,14 @@ class HttpLogger implements LoggerInterface
     {
         $request = $this->requestFactory
             ->createRequest('POST', 'https://apiboard.dev/api/logs')
-            ->withHeader('Authorization', 'Bearer '.$this->token)
+            ->withHeader('Authorization', 'Bearer ' . $this->token)
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->streamFactory->createStream(json_encode($context)));
+            ->withBody($this->streamFactory->createStream(json_encode([
+                'logged_at' => (new DateTime())->format('Y-m-d\TH:i:sP'),
+                'message' => $message,
+                'context' => $context,
+            ])));
 
         $this->http->sendRequest($request);
     }
