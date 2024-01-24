@@ -7,6 +7,19 @@ use Apiboard\OpenAPI\EndpointMatcher;
 use Tests\Builders\ApiBuilder;
 use Tests\Builders\PsrRequestBuilder;
 
+it('can match request to root operation without fixed path', function () {
+    $request = PsrRequestBuilder::new()
+        ->method('GET')
+        ->uri('/')
+        ->make();
+
+    $result = endpointMatcher()->matchingIn($request);
+
+    expect($result)->toBeInstanceOf(Endpoint::class);
+    expect($result->method())->toBe('GET');
+    expect($result->url())->toBe('/');
+});
+
 it('can match request to endpoint for operation without path parameters', function () {
     $request = PsrRequestBuilder::new()
         ->method('GET')

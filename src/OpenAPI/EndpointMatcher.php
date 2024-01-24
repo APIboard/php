@@ -41,7 +41,7 @@ class EndpointMatcher
             $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $uriPattern);
             $pattern = "^$pattern$";
 
-            if (preg_match("#$pattern#", $uriValue, $matches)) {
+            if (preg_match("#$pattern#", $uriValue, $matches) || ($uriPattern === '/' && $uriValue === '')) {
                 return new Endpoint($this->api, $server, $path, $operation);
             }
         }

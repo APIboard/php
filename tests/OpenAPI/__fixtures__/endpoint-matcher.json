@@ -5,6 +5,15 @@
         "title": "My API"
     },
     "paths": {
+        "/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/no-path-parameters": {
             "get": {
                 "responses": {
