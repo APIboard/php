@@ -38,19 +38,28 @@ test('it implements a logger interface', function () {
     expect(HttpLogger::class)->toImplement(LoggerInterface::class);
 });
 
-test('it can log warning messages', function () {
+test('it can log messages with level', function (string $level) {
     $called = false;
     $client = fakeClient(function () use (&$called) {
         $called = true;
     });
     $logger = HttpLoggerBuilder::new()->make($client);
 
-    $logger->warning('Help!');
+    $logger->{$level}('Help!');
 
     expect($called)->toBeTrue();
-});
+})->with([
+    'emergency',
+    'alert',
+    'critical',
+    'error',
+    'warning',
+    'notice',
+    'info',
+    'debug',
+]);
 
-test('it sends the warning message correctly through http', function () {
+test('it sends the message correctly through http', function () {
     /** @var ?RequestInterface $request */
     $request = null;
     $client = fakeClient(function (RequestInterface $sentRequest) use (&$request) {
@@ -58,8 +67,8 @@ test('it sends the warning message correctly through http', function () {
     });
     $logger = HttpLoggerBuilder::new()->make($client);
 
-    $logger->warning('::message::', [
-        'some' => 'key!',
+    $logger->log('<level>', '<message>', [
+        '<key>' => '<value>',
     ]);
 
     expect($request)->toBeInstanceOf(RequestInterface::class);
@@ -73,33 +82,10 @@ test('it sends the warning message correctly through http', function () {
     ]);
     expect($request->getBody()->getContents())->toEqual(json_encode([
         'logged_at' => (new DateTime())->format('Y-m-d\TH:i:sP'),
-        'message' => '::message::',
+        'level' => '<level>',
+        'message' => '<message>',
         'context' => [
-            'some' => 'key!',
+            '<key>' => '<value>',
         ],
     ]));
 });
-
-test('it throws an exception for unsupported log levels', function (string $level) {
-    $message = '';
-    $called = false;
-    $client = fakeClient(fn () => $called = true);
-    $logger = HttpLoggerBuilder::new()->make($client);
-
-    try {
-        $logger->{$level}($level);
-    } catch (BadMethodCallException $e) {
-        $message = $e->getMessage();
-    }
-
-    expect($message)->toBe("Log level[$level] not implemented");
-    expect($called)->toBeFalse();
-})->with([
-    'emergency',
-    'alert',
-    'critical',
-    'error',
-    'notice',
-    'info',
-    'debug',
-]);

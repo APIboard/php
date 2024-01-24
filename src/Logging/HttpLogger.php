@@ -2,7 +2,6 @@
 
 namespace Apiboard\Logging;
 
-use BadMethodCallException;
 use DateTime;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -34,22 +33,22 @@ class HttpLogger implements LoggerInterface
 
     public function emergency(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[emergency] not implemented');
+        $this->log('emergency', $message, $context);
     }
 
     public function alert(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[alert] not implemented');
+        $this->log('alert', $message, $context);
     }
 
     public function critical(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[critical] not implemented');
+        $this->log('critical', $message, $context);
     }
 
     public function error(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[error] not implemented');
+        $this->log('error', $message, $context);
     }
 
     public function warning(string|Stringable $message, array $context = []): void
@@ -59,17 +58,17 @@ class HttpLogger implements LoggerInterface
 
     public function notice(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[notice] not implemented');
+        $this->log('notice', $message, $context);
     }
 
     public function info(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[info] not implemented');
+        $this->log('info', $message, $context);
     }
 
     public function debug(string|Stringable $message, array $context = []): void
     {
-        throw new BadMethodCallException('Log level[debug] not implemented');
+        $this->log('debug', $message, $context);
     }
 
     public function log($level, string|Stringable $message, array $context = []): void
@@ -81,6 +80,7 @@ class HttpLogger implements LoggerInterface
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->streamFactory->createStream(json_encode([
                 'logged_at' => (new DateTime())->format('Y-m-d\TH:i:sP'),
+                'level' => $level,
                 'message' => $message,
                 'context' => $context,
             ])));
