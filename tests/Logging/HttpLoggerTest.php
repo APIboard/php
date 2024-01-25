@@ -75,7 +75,6 @@ test('it sends the message correctly through http', function () {
     expect($request->getMethod())->toBe('POST');
     expect($request->getUri()->__toString())->toBe('https://apiboard.dev/api/logs');
     expect($request->getHeaders())->toBe([
-        'Host' => ['apiboard.dev'],
         'Authorization' => ['Bearer ::token::'],
         'Accept' => ['application/json'],
         'Content-Type' => ['application/json'],

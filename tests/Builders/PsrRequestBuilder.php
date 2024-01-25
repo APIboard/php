@@ -2,10 +2,9 @@
 
 namespace Tests\Builders;
 
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Stream;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
+use PsrDiscovery\Discover;
 
 class PsrRequestBuilder extends Builder
 {
@@ -35,9 +34,9 @@ class PsrRequestBuilder extends Builder
 
     public function body(string $body): self
     {
-        $this->body = new Stream(
-            fopen('data://text/plain;base64,'.base64_encode($body), 'r'),
-        );
+        $factory = Discover::httpStreamFactory();
+
+        $this->body = $factory->createStream($body);
 
         return $this;
     }
@@ -64,8 +63,17 @@ class PsrRequestBuilder extends Builder
 
     public function make(): RequestInterface
     {
-        $fullUri = $this->uri.$this->query;
+        $request = Discover::httpRequestFactory()
+            ->createRequest($this->method, $this->uri.$this->query);
 
-        return new Request($this->method, $fullUri, $this->headers, $this->body);
+        foreach ($this->headers as $name => $value) {
+            $request = $request->withAddedHeader($name, $value);
+        }
+
+        if ($this->body) {
+            $request = $request->withBody($this->body);
+        }
+
+        return $request;
     }
 }

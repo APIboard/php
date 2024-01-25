@@ -38,7 +38,7 @@ class HttpLogger implements LoggerInterface
     {
         $request = $this->requestFactory
             ->createRequest('POST', 'https://apiboard.dev/api/logs')
-            ->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->withHeader('Authorization', 'Bearer '.$this->token)
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->streamFactory->createStream(json_encode([
