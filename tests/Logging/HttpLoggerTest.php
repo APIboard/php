@@ -1,53 +1,24 @@
 <?php
 
 use Apiboard\Logging\HttpLogger;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use PsrMock\Psr18\Client;
 use Tests\Builders\HttpLoggerBuilder;
 use Tests\Builders\PsrResponseBuilder;
-
-function fakeClient(?Closure $callback = null): ClientInterface
-{
-    return new class($callback) implements ClientInterface
-    {
-        protected ?Closure $onSendCallback;
-
-        public function __construct(?Closure $onSendCallback)
-        {
-            $this->onSendCallback = $onSendCallback;
-        }
-
-        public function sendRequest(RequestInterface $request): ResponseInterface
-        {
-            if ($callback = $this->onSendCallback) {
-                $response = $callback($request);
-
-                if ($response instanceof ResponseInterface) {
-                    return $response;
-                }
-            }
-
-            return PsrResponseBuilder::new()->make();
-        }
-    };
-}
 
 test('it implements a logger interface', function () {
     expect(HttpLogger::class)->toImplement(LoggerInterface::class);
 });
 
 test('it can log messages with level', function (string $level) {
-    $called = false;
-    $client = fakeClient(function () use (&$called) {
-        $called = true;
-    });
+    $client = new Client();
+    $client->addResponseWildcard(PsrResponseBuilder::new()->make());
     $logger = HttpLoggerBuilder::new()->make($client);
 
     $logger->{$level}('Help!');
 
-    expect($called)->toBeTrue();
+    expect($client->getTimeline())->not->toBeEmpty();
 })->with([
     'emergency',
     'alert',
@@ -60,17 +31,15 @@ test('it can log messages with level', function (string $level) {
 ]);
 
 test('it sends the message correctly through http', function () {
-    /** @var ?RequestInterface $request */
-    $request = null;
-    $client = fakeClient(function (RequestInterface $sentRequest) use (&$request) {
-        $request = $sentRequest;
-    });
+    $client = new Client();
+    $client->addResponseWildcard(PsrResponseBuilder::new()->make());
     $logger = HttpLoggerBuilder::new()->make($client);
 
     $logger->log('<level>', '<message>', [
         '<key>' => '<value>',
     ]);
 
+    $request = $client->getTimeline()[0]['request'];
     expect($request)->toBeInstanceOf(RequestInterface::class);
     expect($request->getMethod())->toBe('POST');
     expect($request->getUri()->__toString())->toBe('https://apiboard.dev/api/logs');
