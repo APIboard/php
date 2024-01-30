@@ -35,13 +35,13 @@ class EndpointMatcher
                 $request->getUri()
             );
 
-            $uriPattern = $this->parseToPath(parse_url($server?->url() ?? '/')['path'] ?? '').$path->uri();
+            $uriPattern = $this->parseToPath(parse_url($server?->url() ?? '/')['path'] ?? '').$this->parseToPath($path->uri());
             $uriValue = $this->parseToPath($request->getUri()->getPath());
 
             $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $uriPattern);
             $pattern = "^$pattern$";
 
-            if (preg_match("#$pattern#", $uriValue, $matches) || ($uriPattern === '/' && $uriValue === '')) {
+            if (preg_match("#$pattern#", $uriValue, $matches)) {
                 return new Endpoint($this->api, $server, $path, $operation);
             }
         }
