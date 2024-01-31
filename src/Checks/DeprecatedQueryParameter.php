@@ -6,7 +6,7 @@ class DeprecatedQueryParameter extends Check
 {
     public function __invoke(): void
     {
-        foreach ($this->endpoint->parameters()->inQuery() as $query) {
+        foreach ($this->endpoint->parameters()?->inQuery() ?? [] as $query) {
             if ($query->deprecated() === false) {
                 continue;
             }

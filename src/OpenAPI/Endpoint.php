@@ -46,7 +46,7 @@ class Endpoint
 
     public function url(): string
     {
-        return $this->server?->url().$this->path->uri();
+        return $this->server?->url() . $this->path->uri();
     }
 
     public function deprecated(): bool
@@ -54,15 +54,21 @@ class Endpoint
         return $this->operation->deprecated();
     }
 
-    public function parameters(): Parameters
+    public function parameters(): ?Parameters
     {
-        return new Parameters(array_merge(
+        $parameters = array_merge(
             $this->path->parameters()?->toArray() ?? [],
             $this->operation->parameters()?->toArray() ?? [],
-        ));
+        );
+
+        if (count($parameters)) {
+            return new Parameters($parameters);
+        }
+
+        return null;
     }
 
-    public function requestBody(): RequestBody
+    public function requestBody(): ?RequestBody
     {
         return $this->operation->requestBody();
     }

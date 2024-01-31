@@ -6,7 +6,7 @@ class DeprecatedHeaderParameter extends Check
 {
     public function __invoke(): void
     {
-        foreach ($this->endpoint->parameters()->inHeader() as $header) {
+        foreach ($this->endpoint->parameters()?->inHeader() ?? [] as $header) {
             if ($header->deprecated() === false) {
                 continue;
             }
