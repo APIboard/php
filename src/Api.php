@@ -70,7 +70,7 @@ class Api
         return $endpoint->matchingIn($request);
     }
 
-    protected function runChecks(Checks $checks): void
+    public function runChecks(Checks $checks): void
     {
         ($this->checkRunner)($checks);
     }
