@@ -2,12 +2,35 @@
 
 namespace Apiboard\Checks;
 
-class DeprecatedEndpoint extends Check
+use Apiboard\OpenAPI\Endpoint;
+use Psr\Http\Message\MessageInterface;
+use Psr\Log\LogLevel;
+
+class DeprecatedEndpoint implements Check
 {
-    public function __invoke(): void
+    protected Endpoint $endpoint;
+
+    public function __construct(Endpoint $endpoint)
     {
-        if ($this->endpoint->deprecated()) {
-            $this->endpoint->api()->log()->deprecatedEndpointUsed($this->endpoint);
+        $this->endpoint = $endpoint;
+    }
+
+    public function id(): string
+    {
+        return 'deprecated-endpoint';
+    }
+
+    public function run(MessageInterface $message): array
+    {
+        if ($this->endpoint->deprecated() === false) {
+            return [];
         }
+
+        return [
+            new Result(
+                LogLevel::WARNING,
+                "Deprecated endpoint {$this->endpoint->method()} {$this->endpoint->url()} used.",
+            ),
+        ];
     }
 }

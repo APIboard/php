@@ -2,7 +2,7 @@
 
 namespace Apiboard;
 
-use Apiboard\Checks\Check;
+use Apiboard\Checks\Checks;
 use Apiboard\Logging\Sampler;
 use Closure;
 use Psr\Log\LoggerInterface;
@@ -21,7 +21,7 @@ class Apiboard
     public function __construct(array $apis)
     {
         $this->apis = $apis;
-        $this->runChecksCallback = fn (Check ...$checks) => array_map(fn (Check $check) => $check->__invoke(), $checks);
+        $this->runChecksCallback = fn (Checks $checks) => $checks->__invoke();
         $this->logResolverCallback = fn () => new NullLogger();
     }
 
@@ -94,6 +94,6 @@ class Apiboard
     {
         $sampler = new Sampler($rate, $this->runChecksCallback);
 
-        return fn (Check ...$checks) => $sampler->__invoke(...$checks);
+        return fn (Checks $checks) => $sampler->__invoke($checks);
     }
 }

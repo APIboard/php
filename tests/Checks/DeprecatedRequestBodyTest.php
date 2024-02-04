@@ -3,107 +3,61 @@
 namespace Tests\Checks;
 
 use Apiboard\Checks\DeprecatedRequestBody;
-use Tests\Builders\EndpointBuilder;
+use Apiboard\Checks\Result;
 use Tests\Builders\PsrRequestBuilder;
+use Tests\Builders\PsrResponseBuilder;
+use Tests\Builders\RequestBodyBuilder;
 use Tests\Builders\SchemaBuilder;
 
-it('logs to APIboard when a request has a body that has a deprecated schema', function () {
-    $request = PsrRequestBuilder::new()
-        ->header('Content-Type', 'text/plain')
-        ->body('Do not just use a string')
+function deprecatedRequestBody(...$args)
+{
+    return new DeprecatedRequestBody(...$args);
+}
+
+it('returns no results when no deprecated request body schema is used', function () {
+    $message = PsrRequestBuilder::new()
+        ->json([
+            'foo' => [
+                'bar' => '<value>',
+            ],
+        ])
         ->make();
-    $logger = arrayLogger();
-    $endpoint = EndpointBuilder::new()
-        ->logger($logger)
-        ->requestBody(
-            'text/plain',
-            $schema = SchemaBuilder::new()->type('string')->deprecated(true)->make(),
+    $requestBody = RequestBodyBuilder::new()
+        ->json(
+            SchemaBuilder::new()->make()
         )
         ->make();
 
-    (new DeprecatedRequestBody($request, $endpoint))->__invoke();
+    $result = deprecatedRequestBody($requestBody)->run($message);
 
-    $logger->assertWarning($endpoint, 'Deprecated text/plain request body schema was used.', [
-        'media_type' => [
-            'schema' => $schema->toArray(),
-        ],
-    ]);
+    expect($result)->toBeEmpty();
 });
 
-it('logs to APIboard when a request has a body that has a partially deprecated object schema', function () {
-    $request = PsrRequestBuilder::new()
-        ->header('Content-Type', 'application/json')
-        ->body('{"maintained": true, "deprecated": true}')
-        ->make();
-    $logger = arrayLogger();
-    $endpoint = EndpointBuilder::new()
-        ->logger($logger)
-        ->requestBody(
-            'application/json',
-            $schema = SchemaBuilder::new()
-                ->type('object')
-                ->property('maintained', SchemaBuilder::new()->make())
-                ->property('deprecated', SchemaBuilder::new()->deprecated()->make())
-                ->make(),
-        )
-        ->make();
+it('returns no results when the message is a response', function () {
+    $message = PsrResponseBuilder::new()->make();
+    $requestBody = RequestBodyBuilder::new()->make();
 
-    (new DeprecatedRequestBody($request, $endpoint))->__invoke();
+    $result = deprecatedRequestBody($requestBody)->run($message);
 
-    $logger->assertWarning($endpoint, 'Deprecated application/json request body schema was used.', [
-        'media_type' => [
-            'schema' => $schema->toArray(),
-        ],
-    ]);
+    expect($result)->toBeEmpty();
 });
 
-it('logs to APIboard when a request has a body that has a partially deprecated array schema', function () {
-    $request = PsrRequestBuilder::new()
-        ->header('Content-Type', 'application/json')
-        ->body('[{"maintained": true, "deprecated": true}]')
+it('returns results when a deprecated request body schema is used', function () {
+    $message = PsrRequestBuilder::new()
+        ->json([
+            'foo' => [
+                'bar' => '<value>',
+            ],
+        ])
         ->make();
-    $logger = arrayLogger();
-    $endpoint = EndpointBuilder::new()
-        ->logger($logger)
-        ->requestBody(
-            'application/json',
-            $schema = SchemaBuilder::new()
-                ->type('array')
-                ->items(
-                    SchemaBuilder::new()
-                        ->type('object')
-                        ->property('maintained', SchemaBuilder::new()->make())
-                        ->property('deprecated', SchemaBuilder::new()->deprecated()->make())
-                        ->make(),
-                )
-                ->make(),
+    $requestBody = RequestBodyBuilder::new()
+        ->json(
+            SchemaBuilder::new()->deprecated()->make()
         )
         ->make();
 
-    (new DeprecatedRequestBody($request, $endpoint))->__invoke();
+    $result = deprecatedRequestBody($requestBody)->run($message);
 
-    $logger->assertWarning($endpoint, 'Deprecated application/json request body schema was used.', [
-        'media_type' => [
-            'schema' => $schema->toArray(),
-        ],
-    ]);
-});
-
-it('does not log to APIboard when the request has a body that does not have any deprecated schemas', function () {
-    $request = PsrRequestBuilder::new()
-        ->header('Content-Type', 'text/plain')
-        ->body('Do use a string')
-        ->make();
-    $logger = arrayLogger();
-    $endpoint = EndpointBuilder::new()
-        ->logger($logger)
-        ->requestBody(
-            'text/plain',
-            SchemaBuilder::new()->type('string')->make(),
-        )
-        ->make();
-
-    (new DeprecatedRequestBody($request, $endpoint))->__invoke();
-
-    $logger->assertEmpty();
+    expect($result)->toHaveCount(1);
+    expect($result[0])->toBeInstanceOf(Result::class);
 });

@@ -2,63 +2,49 @@
 
 namespace Tests\Builders;
 
-use Apiboard\Http\Client\Response;
-use Apiboard\OpenAPI\Structure\Response as OpenAPIResponse;
-use GuzzleHttp\Psr7\Stream;
-use Psr\Http\Message\StreamInterface;
+use Apiboard\OpenAPI\Structure\Response;
+use Apiboard\OpenAPI\Structure\Schema;
 
 class ResponseBuilder extends Builder
 {
-    protected array $responses = [];
+    protected string $statusCode = '200';
 
-    protected string $contentType = 'application/json';
+    protected array $response = [];
 
-    protected ?StreamInterface $body = null;
-
-    public function __construct()
+    public function deprecatedHeader(string $name): self
     {
-        $this->responses = [
-            200 => new OpenAPIResponse('200', [
-                'content' => [
-                    'application/json' => [],
-                ],
-            ]),
+        $this->response['headers'][$name] = [
+            'deprecated' => true,
         ];
-    }
-
-    public function body(string $body): self
-    {
-        $this->body = new Stream(
-            fopen('data://text/plain;base64,'.base64_encode($body), 'r'),
-        );
 
         return $this;
     }
 
-    public function responses(OpenAPIResponse ...$responses): self
+    public function status(int $status): self
     {
-        foreach ($responses as $response) {
-            $this->responses[$response->statusCode()] = $response;
-        }
+        $this->statusCode = (string) $status;
+
+        return $this;
+    }
+
+    public function header(string $name): self
+    {
+        $this->response['headers'][$name] = [];
+
+        return $this;
+    }
+
+    public function responseBody(string $contentType, ?Schema $schema = null): self
+    {
+        $this->response['content'][$contentType] = [
+            'schema' => $schema?->toArray() ?? [],
+        ];
 
         return $this;
     }
 
     public function make(): Response
     {
-        $response = PsrResponseBuilder::new()
-            ->status(array_rand($this->responses))
-            ->body($this->body ?? '')
-            ->header('Content-Type', $this->contentType)
-            ->make();
-
-        $endpoint = EndpointBuilder::new()
-            ->responses(...$this->responses)
-            ->make();
-
-        return new Response(
-            $response,
-            $endpoint,
-        );
+        return new Response($this->statusCode, $this->response);
     }
 }

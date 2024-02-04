@@ -61,6 +61,17 @@ class PsrRequestBuilder extends Builder
         return $this;
     }
 
+    public function json(?array $body = null): self
+    {
+        $this->header('Content-Type', 'application/json');
+
+        if ($body) {
+            $this->body(json_encode($body));
+        }
+
+        return $this;
+    }
+
     public function make(): RequestInterface
     {
         $request = Discover::httpRequestFactory()

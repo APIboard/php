@@ -2,50 +2,40 @@
 
 namespace Apiboard\Checks;
 
-use Apiboard\OpenAPI\Structure\Schema;
-use Closure;
+use Apiboard\OpenAPI\Structure\RequestBody;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Log\LogLevel;
 
-class DeprecatedRequestBody extends Check
+class DeprecatedRequestBody implements Check
 {
-    public function __invoke(): void
+    protected RequestBody $requestBody;
+
+    public function __construct(RequestBody $requestBody)
     {
-        $mediaType = $this->endpoint->requestBody()->content()[$this->request->getHeaderLine('Content-Type')];
-
-        $payload = match ($mediaType->contentType()) {
-            'application/json' => json_decode($this->request->getBody()),
-            default => $this->request->getBody(),
-        };
-
-        $this->checkPayloadForDeprecations($payload, $mediaType->schema(), function () use ($mediaType) {
-            $this->endpoint->api()->log()->deprecatedRequestBodyUsed($this->endpoint, $mediaType);
-        });
+        $this->requestBody = $requestBody;
     }
 
-    protected function checkPayloadForDeprecations(mixed $payload, Schema $schema, Closure $onDeprecationFound): void
+    public function id(): string
     {
-        if ($schema->deprecated()) {
-            $onDeprecationFound();
-        }
+        return 'deprecated-request-body';
+    }
 
-        if (is_object($payload) && $schema->types()->isObject()) {
-            /** @var Schema $propertySchema */
-            foreach ($schema->properties() as $property => $propertySchema) {
-                if ($propertySchema->deprecated() === false) {
-                    continue;
-                }
+    public function run(MessageInterface $message): array
+    {
+        $results = [];
 
-                if (property_exists($payload, $property)) {
-                    $onDeprecationFound();
+        if ($message instanceof RequestInterface) {
+            $mediaType = $this->requestBody->content()[$message->getHeaderLine('Content-Type')] ?? null;
 
-                    $this->checkPayloadForDeprecations($payload->{$property}, $propertySchema, $onDeprecationFound);
-                }
+            if ($mediaType?->schema()->deprecated()) {
+                $results[] = new Result(
+                    LogLevel::WARNING,
+                    'Deprecated request body schema used.',
+                );
             }
         }
 
-        if (is_array($payload) && $schema->types()->isArray()) {
-            foreach ($payload as $payload) {
-                $this->checkPayloadForDeprecations($payload, $schema->items(), $onDeprecationFound);
-            }
-        }
+        return $results;
     }
 }

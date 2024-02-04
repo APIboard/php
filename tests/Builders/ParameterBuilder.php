@@ -11,6 +11,37 @@ class ParameterBuilder extends Builder
         'name' => 'Parameter',
     ];
 
+    public function query(string $name): self
+    {
+        $this->data['in'] = 'query';
+        $this->data['name'] = $name;
+
+        return $this;
+    }
+
+    public function path(string $name): self
+    {
+        $this->data['in'] = 'path';
+        $this->data['name'] = $name;
+
+        return $this;
+    }
+
+    public function header(string $name): self
+    {
+        $this->data['in'] = 'header';
+        $this->data['name'] = $name;
+
+        return $this;
+    }
+
+    public function deprecated(bool $deprecated = true): self
+    {
+        $this->data['deprecated'] = $deprecated;
+
+        return $this;
+    }
+
     public function make(): Parameter
     {
         return new Parameter($this->data);

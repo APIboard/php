@@ -2,8 +2,7 @@
 
 namespace Apiboard;
 
-use Apiboard\Checks\Check;
-use Apiboard\Logging\Logger;
+use Apiboard\Checks\Checks;
 use Apiboard\OpenAPI\Endpoint;
 use Apiboard\OpenAPI\EndpointMatcher;
 use Apiboard\OpenAPI\OpenAPI;
@@ -48,9 +47,9 @@ class Api
         return $this->document ??= (new OpenAPI())->parse($this->openapi);
     }
 
-    public function log(): Logger
+    public function logger(): LoggerInterface
     {
-        return new Logger($this->logger);
+        return $this->logger;
     }
 
     public function inspect(MessageInterface $message): void
@@ -59,7 +58,7 @@ class Api
             $endpoint = $this->matchingEndpoint($message);
 
             if ($endpoint) {
-                $this->runChecks(...$endpoint->checksFor($message));
+                $this->runChecks($endpoint->checksFor($message));
             }
         }
     }
@@ -71,8 +70,8 @@ class Api
         return $endpoint->matchingIn($request);
     }
 
-    protected function runChecks(Check ...$checks): void
+    protected function runChecks(Checks $checks): void
     {
-        ($this->checkRunner)(...$checks);
+        ($this->checkRunner)($checks);
     }
 }

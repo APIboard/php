@@ -2,8 +2,10 @@
 
 namespace Tests;
 
-use Apiboard\Logging\Logger;
+use Apiboard\Checks\Checks;
+use Psr\Log\LoggerInterface;
 use Tests\Builders\ApiBuilder;
+use Tests\Builders\PsrRequestBuilder;
 
 it('can return the api identifier', function () {
     $api = ApiBuilder::new()
@@ -28,7 +30,20 @@ it('can return the openapi path', function () {
 it('can return a logger', function () {
     $api = ApiBuilder::new()->make();
 
-    $result = $api->log();
+    $result = $api->logger();
 
-    expect($result)->toBeInstanceOf(Logger::class);
+    expect($result)->toBeInstanceOf(LoggerInterface::class);
+});
+
+it('runs the checks when inspecting a message', function () {
+    $runner = function (...$args) {
+        expect($args)->toHaveCount(1);
+        expect($args[0])->toBeInstanceOf(Checks::class);
+    };
+    $api = ApiBuilder::new()
+        ->checkRunner($runner)
+        ->make();
+    $message = PsrRequestBuilder::new()->make();
+
+    $api->inspect($message);
 });

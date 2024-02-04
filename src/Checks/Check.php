@@ -2,20 +2,21 @@
 
 namespace Apiboard\Checks;
 
-use Apiboard\OpenAPI\Endpoint;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\MessageInterface;
 
-abstract class Check
+interface Check
 {
-    protected RequestInterface $request;
+    /**
+     * The unique identifier for the check as
+     * additional context from its results.
+     */
+    public function id(): string;
 
-    protected Endpoint $endpoint;
-
-    public function __construct(RequestInterface $request, Endpoint $endpoint)
-    {
-        $this->request = $request;
-        $this->endpoint = $endpoint;
-    }
-
-    abstract public function __invoke(): void;
+    /**
+     * Returns all the results after running
+     * the check against the given message.
+     *
+     * @return array<array-key,Result>
+     */
+    public function run(MessageInterface $message): array;
 }
