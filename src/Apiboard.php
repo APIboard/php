@@ -33,18 +33,14 @@ class Apiboard
         $this->beforeRunningChecks = $beforeRunningChecks;
     }
 
-    public function disable(): self
+    public function disable(): void
     {
         $this->enabled = false;
-
-        return $this;
     }
 
-    public function enable(): self
+    public function enable(): void
     {
         $this->enabled = true;
-
-        return $this;
     }
 
     public function isDisabled(): bool
@@ -57,18 +53,14 @@ class Apiboard
         return $this->enabled === true;
     }
 
-    public function runChecksUsing(Closure $callback): self
+    public function runChecksUsing(Closure $callback): void
     {
         $this->runChecksCallback = $callback;
-
-        return $this;
     }
 
-    public function resolveLoggerUsing(Closure $callback): self
+    public function resolveLoggerUsing(Closure $callback): void
     {
         $this->logResolverCallback = $callback;
-
-        return $this;
     }
 
     public function api(string $id): ?Api
