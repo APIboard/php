@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Apiboard\Checks\Checks;
+use Apiboard\OpenAPI\Structure\Document;
 use Psr\Log\LoggerInterface;
 use Tests\Builders\ApiBuilder;
 use Tests\Builders\PsrRequestBuilder;
@@ -25,6 +26,14 @@ it('can return the openapi path', function () {
     $result = $api->openapi();
 
     expect($result)->toBe('<path-to-openapi-spec>');
+});
+
+it('can return the specification', function () {
+    $api = ApiBuilder::new()->make();
+
+    $result = $api->specification();
+
+    expect($result)->toBeInstanceOf(Document::class);
 });
 
 it('can return a logger', function () {
