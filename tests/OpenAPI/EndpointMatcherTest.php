@@ -96,9 +96,9 @@ it('does not match request to endpoint when no path operation can be matched', f
 
 function endpointMatcher(): EndpointMatcher
 {
-    return new EndpointMatcher(
-        ApiBuilder::new()
-            ->openapi(__DIR__.'/__fixtures__/endpoint-matcher.json')
-            ->make(),
-    );
+    $api = ApiBuilder::new()
+        ->openapi(__DIR__.'/__fixtures__/endpoint-matcher.json')
+        ->make();
+
+    return new EndpointMatcher($api->specification());
 }

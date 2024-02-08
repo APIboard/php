@@ -2,7 +2,6 @@
 
 namespace Apiboard\OpenAPI;
 
-use APIboard\Api;
 use Apiboard\OpenAPI\Structure\Document;
 use Apiboard\OpenAPI\Structure\Server;
 use Apiboard\OpenAPI\Structure\Servers;
@@ -13,9 +12,9 @@ class EndpointMatcher
 {
     protected Document $specification;
 
-    public function __construct(Api $api)
+    public function __construct(Document $specification)
     {
-        $this->specification = $api->specification();
+        $this->specification = $specification;
     }
 
     public function matchingIn(RequestInterface $request): ?Endpoint

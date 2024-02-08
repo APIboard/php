@@ -69,7 +69,7 @@ class Api
 
     public function matchingEndpoint(RequestInterface $request): ?Endpoint
     {
-        $endpoint = new EndpointMatcher($this);
+        $endpoint = new EndpointMatcher($this->specification());
 
         return $endpoint->matchingIn($request);
     }
