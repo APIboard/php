@@ -22,6 +22,16 @@ class Checks
         $this->message = $message;
     }
 
+    public function api(): Api
+    {
+        return $this->api;
+    }
+
+    public function message(): MessageInterface
+    {
+        return $this->message;
+    }
+
     public function add(Check ...$checks): self
     {
         foreach ($checks as $check) {
