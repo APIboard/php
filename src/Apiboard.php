@@ -14,6 +14,8 @@ class Apiboard
 
     protected bool $enabled = true;
 
+    protected Closure $beforeRunningChecks;
+
     protected Closure $runChecksCallback;
 
     protected Closure $logResolverCallback;
@@ -21,8 +23,14 @@ class Apiboard
     public function __construct(array $apis)
     {
         $this->apis = $apis;
+        $this->beforeRunningChecks = fn () => null;
         $this->runChecksCallback = fn (Checks $checks) => $checks->__invoke();
         $this->logResolverCallback = fn () => new NullLogger();
+    }
+
+    public function beforeRunningChecks(Closure $beforeRunningChecks): void
+    {
+        $this->beforeRunningChecks = $beforeRunningChecks;
     }
 
     public function disable(): self
@@ -94,6 +102,10 @@ class Apiboard
     {
         $sampler = new Sampler($rate, $this->runChecksCallback);
 
-        return fn (Checks $checks) => $sampler->__invoke($checks);
+        return function (Checks $checks) use ($sampler) {
+            ($this->beforeRunningChecks)($checks);
+
+            $sampler->__invoke($checks);
+        };
     }
 }
