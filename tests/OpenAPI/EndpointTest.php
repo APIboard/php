@@ -2,7 +2,6 @@
 
 namespace Tests\OpenAPI;
 
-use Apiboard\Checks\Checks;
 use Apiboard\Checks\DeprecatedEndpoint;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\OpenAPI\Endpoint;
@@ -27,8 +26,7 @@ it('can return the relevant response checks for an endpoint', function () {
 
     $results = $endpoint->checksFor($response);
 
-    expect($results)->toBeInstanceOf(Checks::class);
-    expect($results->all())->toHaveCount(0);
+    expect($results)->toHaveCount(0);
 });
 
 it('can return the relevant request checks for an endpoint', function (Endpoint $endpoint, array $checks) {
@@ -36,9 +34,7 @@ it('can return the relevant request checks for an endpoint', function (Endpoint 
 
     $results = $endpoint->checksFor($request);
 
-    expect($results)->toBeInstanceOf(Checks::class);
-    expect($results->all())->toHaveCount(count($checks));
-    foreach ($results->all() as $result) {
+    foreach ($results as $result) {
         expect($result::class)->toBeIn($checks);
     }
 })->with([

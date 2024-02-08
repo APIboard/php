@@ -2,8 +2,6 @@
 
 namespace Apiboard\OpenAPI;
 
-use Apiboard\Api;
-use Apiboard\Checks\Checks;
 use Apiboard\Checks\DeprecatedEndpoint;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\Checks\DeprecatedRequestBody;
@@ -18,25 +16,17 @@ use Psr\Http\Message\RequestInterface;
 
 class Endpoint
 {
-    protected Api $api;
-
     protected ?Server $server;
 
     protected PathItem $path;
 
     protected Operation $operation;
 
-    public function __construct(Api $api, ?Server $server, PathItem $path, Operation $operation)
+    public function __construct(?Server $server, PathItem $path, Operation $operation)
     {
-        $this->api = $api;
         $this->server = $server;
         $this->path = $path;
         $this->operation = $operation;
-    }
-
-    public function api(): Api
-    {
-        return $this->api;
     }
 
     public function method(): string
@@ -78,19 +68,22 @@ class Endpoint
         return $this->operation->responses();
     }
 
-    public function checksFor(MessageInterface $message): Checks
+    /**
+     * @return array<array-key,Check>
+     */
+    public function checksFor(MessageInterface $message): array
     {
-        $checks = new Checks($this->api(), $message);
+        $checks = [];
 
         if ($message instanceof RequestInterface) {
-            $checks->add(new DeprecatedEndpoint($this));
+            $checks[] = new DeprecatedEndpoint($this);
 
             if ($this->parameters()) {
-                $checks->add(new DeprecatedParameters($this->parameters()));
+                $checks[] = new DeprecatedParameters($this->parameters());
             }
 
             if ($this->requestBody()) {
-                $checks->add(new DeprecatedRequestBody($this->requestBody()));
+                $checks[] = new DeprecatedRequestBody($this->requestBody());
             }
         }
 

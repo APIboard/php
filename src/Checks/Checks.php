@@ -22,9 +22,11 @@ class Checks
         $this->message = $message;
     }
 
-    public function add(Check $check): self
+    public function add(Check ...$checks): self
     {
-        $this->checks[] = $check;
+        foreach ($checks as $check) {
+            $this->checks[] = $check;
+        }
 
         return $this;
     }
@@ -40,10 +42,5 @@ class Checks
                 ]);
             }
         }
-    }
-
-    public function all(): array
-    {
-        return $this->checks;
     }
 }

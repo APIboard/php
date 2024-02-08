@@ -11,13 +11,10 @@ use Psr\Http\Message\UriInterface;
 
 class EndpointMatcher
 {
-    protected Api $api;
-
     protected Document $specification;
 
     public function __construct(Api $api)
     {
-        $this->api = $api;
         $this->specification = $api->specification();
     }
 
@@ -42,7 +39,7 @@ class EndpointMatcher
             $pattern = "^$pattern$";
 
             if (preg_match("#$pattern#", $uriValue, $matches)) {
-                return new Endpoint($this->api, $server, $path, $operation);
+                return new Endpoint($server, $path, $operation);
             }
         }
 

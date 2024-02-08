@@ -115,23 +115,9 @@ class EndpointBuilder extends Builder
         return $this;
     }
 
-    public function logger(LoggerInterface $logger): self
-    {
-        $this->logger = $logger;
-
-        return $this;
-    }
-
     public function make(): Endpoint
     {
-        $apiBuilder = ApiBuilder::new();
-
-        if ($this->logger) {
-            $apiBuilder->logger($this->logger);
-        }
-
         return new Endpoint(
-            $apiBuilder->make(),
             null,
             new PathItem($this->uri, $this->path),
             new Operation($this->method, $this->operation),
