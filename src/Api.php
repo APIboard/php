@@ -64,7 +64,7 @@ class Api
             }
         }
 
-        $this->runChecks($checks);
+        ($this->checkRunner)($checks);
     }
 
     public function matchingEndpoint(RequestInterface $request): ?Endpoint
@@ -72,10 +72,5 @@ class Api
         $endpoint = new EndpointMatcher($this->specification());
 
         return $endpoint->matchingIn($request);
-    }
-
-    public function runChecks(Checks $checks): void
-    {
-        ($this->checkRunner)($checks);
     }
 }
