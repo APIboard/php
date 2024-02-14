@@ -63,19 +63,15 @@ class Apiboard
         $this->logResolverCallback = $callback;
     }
 
-    public function api(string $id): ?Api
+    public function api(string $id): Api
     {
-        if ($this->isDisabled()) {
-            return null;
-        }
-
         $api = $this->apis[$id];
 
         return new Api(
             $api['apiboard_id'],
             $api['openapi'],
             $this->resolveLogger($api['channel'] ?? null),
-            $this->resolveSampledChecksRunner($api['sample_rate'] ?? 1),
+            $this->resolveChecksRunner($api['sample_rate'] ?? 1),
         );
     }
 
@@ -84,14 +80,19 @@ class Apiboard
         $logResolver = $this->logResolverCallback;
 
         return match (true) {
+            $this->isDisabled() => $logResolver(null),
             $logger instanceof LoggerInterface => $logger,
             is_string($logger) => $logResolver($logger),
             default => $logResolver(null),
         };
     }
 
-    protected function resolveSampledChecksRunner(int|float $rate): Closure
+    protected function resolveChecksRunner(int|float $rate): Closure
     {
+        if ($this->isDisabled()) {
+            return fn () => null;
+        }
+
         $sampler = new Sampler($rate, $this->runChecksCallback);
 
         return function (Checks $checks) use ($sampler) {
