@@ -5,6 +5,7 @@ namespace Apiboard\OpenAPI;
 use Apiboard\Checks\DeprecatedEndpoint;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\Checks\DeprecatedRequestBody;
+use Apiboard\OpenAPI\References\JsonPointer;
 use Apiboard\OpenAPI\Structure\Operation;
 use Apiboard\OpenAPI\Structure\Parameters;
 use Apiboard\OpenAPI\Structure\PathItem;
@@ -66,6 +67,11 @@ class Endpoint
     public function responses(): Responses
     {
         return $this->operation->responses();
+    }
+
+    public function pointer(): ?JsonPointer
+    {
+        return $this->operation->pointer();
     }
 
     /**

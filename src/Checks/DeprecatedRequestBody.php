@@ -32,6 +32,9 @@ class DeprecatedRequestBody implements Check
                 $results[] = new Result(
                     LogLevel::WARNING,
                     'Deprecated request body schema used.',
+                    [
+                        'pointer' => $mediaType->pointer()?->value(),
+                    ],
                 );
             }
         }

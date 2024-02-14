@@ -42,6 +42,9 @@ class DeprecatedParameters implements Check
                     $results[] = new Result(
                         LogLevel::WARNING,
                         "Deprecated {$parameter->in()} parameter [{$parameter->name()}] used.",
+                        [
+                            'pointer' => $parameter->pointer()?->value(),
+                        ],
                     );
                 }
             }
