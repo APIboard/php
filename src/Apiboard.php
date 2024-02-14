@@ -65,7 +65,7 @@ class Apiboard
 
     public function api(string $id): ?Api
     {
-        if ($this->enabled === false) {
+        if ($this->isDisabled()) {
             return null;
         }
 
