@@ -1,12 +1,19 @@
 <?php
 
-use Apiboard\OpenAPI\Endpoint;
+use Apiboard\Checks\Check;
+use Apiboard\Checks\Result;
+use Psr\Http\Message\MessageInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
 
 function arrayLogger(): ArrayLogger
 {
     return new ArrayLogger();
+}
+
+function arrayCheck(): ArrayCheck
+{
+    return new ArrayCheck();
 }
 
 class ArrayLogger implements LoggerInterface
@@ -18,29 +25,9 @@ class ArrayLogger implements LoggerInterface
      */
     protected array $logged = [];
 
-    public function assertWarning(Endpoint $endpoint, string $message, array $context = []): void
+    public function assertNotEmpty(): void
     {
-        $this->assertLogged('warning', $endpoint, $message, $context);
-    }
-
-    public function assertEmpty(): void
-    {
-        expect($this->logged)->toBeEmpty();
-    }
-
-    public function assertLogged(string $level, Endpoint $endpoint, string $message, array $context): void
-    {
-        expect($this->logged)->toHaveKey($level);
-        expect($this->logged[$level])->toContain([
-            'message' => $message,
-            'context' => array_merge([
-                'api' => $endpoint->api()->id(),
-                'operation' => [
-                    'method' => $endpoint->method(),
-                    'url' => $endpoint->url(),
-                ],
-            ], $context),
-        ]);
+        expect($this->logged)->not->toBeEmpty();
     }
 
     public function log($level, string|Stringable $message, array $context = []): void
@@ -49,5 +36,36 @@ class ArrayLogger implements LoggerInterface
             'message' => $message,
             'context' => $context,
         ];
+    }
+}
+
+class ArrayCheck implements Check
+{
+    protected array $messages = [];
+
+    protected array $results;
+
+    public function id(): string
+    {
+        return 'array-check';
+    }
+
+    public function addResult(Result $result): self
+    {
+        $this->results[] = $result;
+
+        return $this;
+    }
+
+    public function run(MessageInterface $message): array
+    {
+        $this->messages[] = $message;
+
+        return $this->results;
+    }
+
+    public function assertRanFor(MessageInterface $messageInterface): void
+    {
+        expect($this->messages)->toContain($messageInterface);
     }
 }
