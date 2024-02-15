@@ -2,34 +2,51 @@
 
 namespace Apiboard\Checks;
 
-use Apiboard\Api;
-use Psr\Http\Message\MessageInterface;
+use Apiboard\OpenAPI\Endpoint;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 class Checks
 {
-    protected Api $api;
+    protected Endpoint $endpoint;
 
-    protected MessageInterface $message;
+    protected LoggerInterface $logger;
+
+    protected RequestInterface $request;
+
+    protected ResponseInterface $response;
 
     /**
      * @var array<array-key,Check>
      */
     protected array $checks = [];
 
-    public function __construct(Api $api, MessageInterface $message)
-    {
-        $this->api = $api;
-        $this->message = $message;
+    public function __construct(
+        Endpoint $endpoint,
+        LoggerInterface $logger,
+        RequestInterface $request,
+        ResponseInterface $response,
+    ) {
+        $this->endpoint = $endpoint;
+        $this->logger = $logger;
+        $this->request = $request;
+        $this->response = $response;
     }
 
-    public function api(): Api
+    public function endpoint(): Endpoint
     {
-        return $this->api;
+        return $this->endpoint;
     }
 
-    public function message(): MessageInterface
+    public function request(): RequestInterface
     {
-        return $this->message;
+        return $this->request;
+    }
+
+    public function response(): ResponseInterface
+    {
+        return $this->response;
     }
 
     public function add(Check ...$checks): self
@@ -44,9 +61,17 @@ class Checks
     public function __invoke(): void
     {
         foreach ($this->checks as $check) {
-            foreach ($check->run($this->message) as $result) {
-                $this->api->logger()->log($result->severity(), $result->summary(), [
-                    'api' => $this->api->id(),
+            $results = [
+                ...$check->run($this->request),
+                ...$check->run($this->response),
+            ];
+
+            foreach ($results as $result) {
+                $this->logger->log($result->severity(), $result->summary(), [
+                    'endpoint' => [
+                        'method' => $this->endpoint->method(),
+                        'url' => $this->endpoint()->url(),
+                    ],
                     'check' => $check->id(),
                     'details' => $result->details(),
                 ]);

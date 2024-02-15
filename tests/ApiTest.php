@@ -7,6 +7,7 @@ use Apiboard\OpenAPI\Structure\Document;
 use Psr\Log\LoggerInterface;
 use Tests\Builders\ApiBuilder;
 use Tests\Builders\PsrRequestBuilder;
+use Tests\Builders\PsrResponseBuilder;
 
 it('can return the api identifier', function () {
     $api = ApiBuilder::new()
@@ -44,7 +45,7 @@ it('can return a logger', function () {
     expect($result)->toBeInstanceOf(LoggerInterface::class);
 });
 
-it('runs the checks when inspecting a message', function () {
+it('runs the checks when inspecting traffic', function () {
     $runner = function (...$args) {
         expect($args)->toHaveCount(1);
         expect($args[0])->toBeInstanceOf(Checks::class);
@@ -52,7 +53,8 @@ it('runs the checks when inspecting a message', function () {
     $api = ApiBuilder::new()
         ->checkRunner($runner)
         ->make();
-    $message = PsrRequestBuilder::new()->make();
+    $request = PsrRequestBuilder::new()->make();
+    $response = PsrResponseBuilder::new()->make();
 
-    $api->inspect($message);
+    $api->inspect($request, $response);
 });

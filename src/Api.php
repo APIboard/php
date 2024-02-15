@@ -8,8 +8,8 @@ use Apiboard\OpenAPI\EndpointMatcher;
 use Apiboard\OpenAPI\OpenAPI;
 use Apiboard\OpenAPI\Structure\Document;
 use Closure;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class Api
@@ -52,19 +52,18 @@ class Api
         return $this->logger;
     }
 
-    public function inspect(MessageInterface $message): void
+    public function inspect(RequestInterface $request, ResponseInterface $response): void
     {
-        $checks = new Checks($this, $message);
+        $endpoint = $this->matchingEndpoint($request);
 
-        if ($message instanceof RequestInterface) {
-            $endpoint = $this->matchingEndpoint($message);
+        if ($endpoint) {
+            $checks = new Checks($endpoint, $this->logger(), $request, $response);
 
-            if ($endpoint) {
-                $checks->add(...$endpoint->checksFor($message));
-            }
+            $checks->add(...$endpoint->checksFor($request));
+            $checks->add(...$endpoint->checksFor($response));
+
+            ($this->checkRunner)($checks);
         }
-
-        ($this->checkRunner)($checks);
     }
 
     public function matchingEndpoint(RequestInterface $request): ?Endpoint
