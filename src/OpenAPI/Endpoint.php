@@ -37,7 +37,7 @@ class Endpoint
 
     public function url(): string
     {
-        return $this->server?->url().$this->path->uri();
+        return $this->server?->url() . $this->path->uri();
     }
 
     public function deprecated(): bool
@@ -59,19 +59,9 @@ class Endpoint
         return null;
     }
 
-    public function requestBody(): ?RequestBody
+    public function operation(): Operation
     {
-        return $this->operation->requestBody();
-    }
-
-    public function responses(): Responses
-    {
-        return $this->operation->responses();
-    }
-
-    public function pointer(): ?JsonPointer
-    {
-        return $this->operation->pointer();
+        return $this->operation;
     }
 
     /**
@@ -88,8 +78,8 @@ class Endpoint
                 $checks[] = new DeprecatedParameters($this->parameters());
             }
 
-            if ($this->requestBody()) {
-                $checks[] = new DeprecatedRequestBody($this->requestBody());
+            if ($this->operation->requestBody()) {
+                $checks[] = new DeprecatedRequestBody($this->operation->requestBody());
             }
         }
 

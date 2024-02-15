@@ -31,7 +31,7 @@ class DeprecatedEndpoint implements Check
                 LogLevel::WARNING,
                 "Deprecated endpoint {$this->endpoint->method()} {$this->endpoint->url()} used.",
                 [
-                    'pointer' => $this->endpoint->pointer()?->value(),
+                    'pointer' => $this->endpoint->operation()->pointer()?->value(),
                 ],
 
             ),
