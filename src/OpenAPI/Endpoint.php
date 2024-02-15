@@ -5,12 +5,9 @@ namespace Apiboard\OpenAPI;
 use Apiboard\Checks\DeprecatedEndpoint;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\Checks\DeprecatedRequestBody;
-use Apiboard\OpenAPI\References\JsonPointer;
 use Apiboard\OpenAPI\Structure\Operation;
 use Apiboard\OpenAPI\Structure\Parameters;
 use Apiboard\OpenAPI\Structure\PathItem;
-use Apiboard\OpenAPI\Structure\RequestBody;
-use Apiboard\OpenAPI\Structure\Responses;
 use Apiboard\OpenAPI\Structure\Server;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
@@ -37,7 +34,7 @@ class Endpoint
 
     public function url(): string
     {
-        return $this->server?->url() . $this->path->uri();
+        return $this->server?->url().$this->path->uri();
     }
 
     public function deprecated(): bool
