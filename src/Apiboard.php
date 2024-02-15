@@ -80,10 +80,9 @@ class Apiboard
         $logResolver = $this->logResolverCallback;
 
         return match (true) {
-            $this->isDisabled() => $logResolver(null),
+            $this->isDisabled() => new NullLogger(),
             $logger instanceof LoggerInterface => $logger,
-            is_string($logger) => $logResolver($logger),
-            default => $logResolver(null),
+            default => $logResolver($logger),
         };
     }
 
