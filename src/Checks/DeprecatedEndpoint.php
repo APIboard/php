@@ -2,13 +2,14 @@
 
 namespace Apiboard\Checks;
 
+use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\OpenAPI\Endpoint;
-use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LogLevel;
 
 class DeprecatedEndpoint implements Check
 {
+    use AcceptsRequest;
+
     protected Endpoint $endpoint;
 
     public function __construct(Endpoint $endpoint)
@@ -16,29 +17,20 @@ class DeprecatedEndpoint implements Check
         $this->endpoint = $endpoint;
     }
 
-    public function id(): string
+    public function run(): array
     {
-        return 'deprecated-endpoint';
-    }
-
-    public function run(MessageInterface $message): array
-    {
-        $results = [];
-
         if ($this->endpoint->deprecated() === false) {
-            return $results;
+            return [];
         }
 
-        if ($message instanceof RequestInterface) {
-            $results[] = new Result(
+        return [
+            new Result(
                 LogLevel::WARNING,
                 "Deprecated endpoint {$this->endpoint->method()} {$this->endpoint->url()} used.",
                 [
                     'pointer' => $this->endpoint->operation()->pointer()?->value(),
                 ],
-            );
-        }
-
-        return $results;
+            ),
+        ];
     }
 }

@@ -7,16 +7,14 @@ use Psr\Http\Message\MessageInterface;
 interface Check
 {
     /**
-     * The unique identifier for the check as
-     * additional context from its results.
+     * The message the check should be using.
      */
-    public function id(): string;
+    public function message(MessageInterface $message): void;
 
     /**
-     * Returns all the results after running
-     * the check against the given message.
+     * Returns all the results after running.
      *
      * @return array<array-key,Result>
      */
-    public function run(MessageInterface $message): array;
+    public function run(): array;
 }

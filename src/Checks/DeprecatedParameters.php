@@ -2,13 +2,14 @@
 
 namespace Apiboard\Checks;
 
+use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\OpenAPI\Structure\Parameters;
-use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\LogLevel;
 
 class DeprecatedParameters implements Check
 {
+    use AcceptsRequest;
+
     protected Parameters $parameters;
 
     public function __construct(Parameters $parameters)
@@ -21,32 +22,30 @@ class DeprecatedParameters implements Check
         return 'deprecated-parameters';
     }
 
-    public function run(MessageInterface $message): array
+    public function run(): array
     {
         $results = [];
 
-        if ($message instanceof RequestInterface) {
-            foreach ($this->parameters as $parameter) {
-                if ($parameter->deprecated() === false) {
-                    continue;
-                }
+        foreach ($this->parameters as $parameter) {
+            if ($parameter->deprecated() === false) {
+                continue;
+            }
 
-                $isUsed = match ($parameter->in()) {
-                    'header' => $message->hasHeader($parameter->name()),
-                    'query' => str_contains($message->getUri()->getQuery(), "{$parameter->name()}="),
-                    'path' => true,
-                    default => false,
-                };
+            $isUsed = match ($parameter->in()) {
+                'header' => $this->request->hasHeader($parameter->name()),
+                'query' => str_contains($this->request->getUri()->getQuery(), "{$parameter->name()}="),
+                'path' => true,
+                default => false,
+            };
 
-                if ($isUsed) {
-                    $results[] = new Result(
-                        LogLevel::WARNING,
-                        "Deprecated {$parameter->in()} parameter [{$parameter->name()}] used.",
-                        [
-                            'pointer' => $parameter->pointer()?->value(),
-                        ],
-                    );
-                }
+            if ($isUsed) {
+                $results[] = new Result(
+                    LogLevel::WARNING,
+                    "Deprecated {$parameter->in()} parameter [{$parameter->name()}] used.",
+                    [
+                        'pointer' => $parameter->pointer()?->value(),
+                    ],
+                );
             }
         }
 

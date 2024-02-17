@@ -5,7 +5,6 @@ namespace Tests\Checks;
 use Apiboard\Checks\DeprecatedRequestBody;
 use Apiboard\Checks\Result;
 use Tests\Builders\PsrRequestBuilder;
-use Tests\Builders\PsrResponseBuilder;
 use Tests\Builders\RequestBodyBuilder;
 use Tests\Builders\SchemaBuilder;
 
@@ -27,17 +26,10 @@ it('returns no results when no deprecated request body schema is used', function
             SchemaBuilder::new()->make()
         )
         ->make();
+    $check = deprecatedRequestBody($requestBody);
+    $check->message($message);
 
-    $result = deprecatedRequestBody($requestBody)->run($message);
-
-    expect($result)->toBeEmpty();
-});
-
-it('returns no results when the message is a response', function () {
-    $message = PsrResponseBuilder::new()->make();
-    $requestBody = RequestBodyBuilder::new()->make();
-
-    $result = deprecatedRequestBody($requestBody)->run($message);
+    $result = $check->run();
 
     expect($result)->toBeEmpty();
 });
@@ -55,8 +47,10 @@ it('returns results when a deprecated request body schema is used', function () 
             SchemaBuilder::new()->deprecated()->make()
         )
         ->make();
+    $check = deprecatedRequestBody($requestBody);
+    $check->message($message);
 
-    $result = deprecatedRequestBody($requestBody)->run($message);
+    $result = $check->run();
 
     expect($result)->toHaveCount(1);
     expect($result[0])->toBeInstanceOf(Result::class);

@@ -58,3 +58,16 @@ it('runs the checks when inspecting traffic', function () {
 
     $api->inspect($request, $response);
 });
+
+it('runs the checks when inspecting only a request', function () {
+    $runner = function (...$args) {
+        expect($args)->toHaveCount(1);
+        expect($args[0])->toBeInstanceOf(Checks::class);
+    };
+    $api = ApiBuilder::new()
+        ->checkRunner($runner)
+        ->make();
+    $request = PsrRequestBuilder::new()->make();
+
+    $api->inspect($request);
+});

@@ -11,9 +11,9 @@ function arrayLogger(): ArrayLogger
     return new ArrayLogger();
 }
 
-function arrayCheck(): ArrayCheck
+function testCheck(): TestCheck
 {
-    return new ArrayCheck();
+    return new TestCheck();
 }
 
 class ArrayLogger implements LoggerInterface
@@ -39,15 +39,15 @@ class ArrayLogger implements LoggerInterface
     }
 }
 
-class ArrayCheck implements Check
+class TestCheck implements Check
 {
-    protected array $messages = [];
+    protected ?MessageInterface $message = null;
 
-    protected array $results;
+    protected array $results = [];
 
-    public function id(): string
+    public function message(MessageInterface $message): void
     {
-        return 'array-check';
+        $this->message = $message;
     }
 
     public function addResult(Result $result): self
@@ -57,15 +57,14 @@ class ArrayCheck implements Check
         return $this;
     }
 
-    public function run(MessageInterface $message): array
+    public function run(): array
     {
-        $this->messages[] = $message;
-
         return $this->results;
     }
 
-    public function assertRanFor(MessageInterface $messageInterface): void
+    public function assertUsingMessage(MessageInterface $message): void
     {
-        expect($this->messages)->toContain($messageInterface);
+        expect($this->message)->not->toBeNull();
+        expect($this->message)->toBe($message);
     }
 }
