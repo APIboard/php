@@ -4,6 +4,7 @@ namespace Apiboard\Checks;
 
 use Apiboard\OpenAPI\Endpoint;
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Log\LogLevel;
 
 class DeprecatedEndpoint implements Check
@@ -22,19 +23,22 @@ class DeprecatedEndpoint implements Check
 
     public function run(MessageInterface $message): array
     {
+        $results = [];
+
         if ($this->endpoint->deprecated() === false) {
-            return [];
+            return $results;
         }
 
-        return [
-            new Result(
+        if ($message instanceof RequestInterface) {
+            $results[] = new Result(
                 LogLevel::WARNING,
                 "Deprecated endpoint {$this->endpoint->method()} {$this->endpoint->url()} used.",
                 [
                     'pointer' => $this->endpoint->operation()->pointer()?->value(),
                 ],
+            );
+        }
 
-            ),
-        ];
+        return $results;
     }
 }
