@@ -6,7 +6,7 @@ use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\OpenAPI\Endpoint;
 use Psr\Log\LogLevel;
 
-class DeprecatedEndpoint implements Check
+class DeprecatedOperation implements Check
 {
     use AcceptsRequest;
 
@@ -19,18 +19,22 @@ class DeprecatedEndpoint implements Check
 
     public function run(): array
     {
+        $results = [];
+
         if ($this->endpoint->deprecated() === false) {
-            return [];
+            return $results;
         }
 
-        return [
-            new Result(
+        if ($this->endpoint->matches($this->request)) {
+            $results[] = new Result(
                 LogLevel::WARNING,
-                "Deprecated endpoint {$this->endpoint->method()} {$this->endpoint->url()} used.",
+                "Deprecated operation used.",
                 [
                     'pointer' => $this->endpoint->operation()->pointer()?->value(),
                 ],
-            ),
-        ];
+            );
+        }
+
+        return $results;
     }
 }

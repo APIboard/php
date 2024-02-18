@@ -28,17 +28,13 @@ class EndpointMatcher
 
             $server = $this->serverForUri(
                 $operation->servers() ?? $path->servers() ?? $this->specification->servers(),
-                $request->getUri()
+                $request->getUri(),
             );
 
-            $uriPattern = $this->parseToPath(parse_url($server?->url() ?? '/')['path'] ?? '').$this->parseToPath($path->uri());
-            $uriValue = $this->parseToPath($request->getUri()->getPath());
+            $endpoint = new Endpoint($server, $path, $operation);
 
-            $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $uriPattern);
-            $pattern = "^$pattern$";
-
-            if (preg_match("#$pattern#", $uriValue, $matches)) {
-                return new Endpoint($server, $path, $operation);
+            if ($endpoint->matches($request)) {
+                return $endpoint;
             }
         }
 
@@ -58,16 +54,5 @@ class EndpointMatcher
         }
 
         return null;
-    }
-
-    protected function parseToPath(string $value): string
-    {
-        $value = ltrim($value, '/');
-
-        if ($value === '') {
-            return $value;
-        }
-
-        return '/'.trim($value, '/');
     }
 }

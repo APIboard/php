@@ -2,7 +2,7 @@
 
 namespace Apiboard\OpenAPI;
 
-use Apiboard\Checks\DeprecatedEndpoint;
+use Apiboard\Checks\DeprecatedOperation;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\Checks\DeprecatedRequestBody;
 use Apiboard\OpenAPI\Structure\Operation;
@@ -34,7 +34,7 @@ class Endpoint
 
     public function url(): string
     {
-        return $this->server?->url().$this->path->uri();
+        return $this->server?->url() . $this->path->uri();
     }
 
     public function deprecated(): bool
@@ -69,7 +69,7 @@ class Endpoint
         $checks = [];
 
         if ($message instanceof RequestInterface) {
-            $checks[] = new DeprecatedEndpoint($this);
+            $checks[] = new DeprecatedOperation($this);
 
             if ($this->parameters()) {
                 $checks[] = new DeprecatedParameters($this->parameters());
@@ -81,5 +81,17 @@ class Endpoint
         }
 
         return $checks;
+    }
+
+    public function matches(RequestInterface $request): bool
+    {
+        if ($this->method() !== $request->getMethod()) {
+            return false;
+        }
+
+        $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $this->url());
+        $pattern = "^$pattern$";
+
+        return (bool) preg_match("#$pattern#", $request->getUri());
     }
 }

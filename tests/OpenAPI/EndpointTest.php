@@ -2,7 +2,7 @@
 
 namespace Tests\OpenAPI;
 
-use Apiboard\Checks\DeprecatedEndpoint;
+use Apiboard\Checks\DeprecatedOperation;
 use Apiboard\Checks\DeprecatedParameters;
 use Apiboard\OpenAPI\Endpoint;
 use Tests\Builders\EndpointBuilder;
@@ -40,41 +40,41 @@ it('can return the relevant request checks for an endpoint', function (Endpoint 
 })->with([
     'without parameters or request body' => [
         EndpointBuilder::new()->make(), [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
         ],
     ],
     'with operation query parameters' => [
         EndpointBuilder::new()->deprecatedOperationQueryParameter('<query>')->make(),
         [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
             DeprecatedParameters::class,
         ],
     ],
     'with path query parameters' => [
         EndpointBuilder::new()->deprecatedPathQueryParameter('<query>')->make(),
         [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
             DeprecatedParameters::class,
         ],
     ],
     'with operation header parameters' => [
         EndpointBuilder::new()->deprecatedOperationHeaderParameter('<header>')->make(),
         [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
             DeprecatedParameters::class,
         ],
     ],
     'with path header parameters' => [
         EndpointBuilder::new()->deprecatedPathHeader('<header>')->make(),
         [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
             DeprecatedParameters::class,
         ],
     ],
     'with path parameters' => [
         EndpointBuilder::new()->deprecatedPathParameter('<path>')->make(),
         [
-            DeprecatedEndpoint::class,
+            DeprecatedOperation::class,
             DeprecatedParameters::class,
         ],
     ],
