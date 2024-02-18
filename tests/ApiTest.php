@@ -9,16 +9,6 @@ use Tests\Builders\ApiBuilder;
 use Tests\Builders\PsrRequestBuilder;
 use Tests\Builders\PsrResponseBuilder;
 
-it('can return the api identifier', function () {
-    $api = ApiBuilder::new()
-        ->id('<id>')
-        ->make();
-
-    $result = $api->id();
-
-    expect($result)->toBe('<id>');
-});
-
 it('can return the openapi path', function () {
     $api = ApiBuilder::new()
         ->openapi('<path-to-openapi-spec>')

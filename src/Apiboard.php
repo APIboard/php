@@ -68,7 +68,6 @@ class Apiboard
         $api = $this->apis[$id];
 
         return new Api(
-            $api['apiboard_id'],
             $api['openapi'],
             $this->resolveLogger($api['channel'] ?? null),
             $this->resolveChecksRunner($api['sample_rate'] ?? 1),

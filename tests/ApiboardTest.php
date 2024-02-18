@@ -7,19 +7,17 @@ use Psr\Log\NullLogger;
 test('it can get the correct api from the config by name', function () {
     $apiboard = new Apiboard([
         'example' => [
-            'apiboard_id' => 'api-example-id',
-            'openapi' => '',
+            'openapi' => '{{example-openapi}}',
         ],
         'other-example' => [
-            'apiboard_id' => 'other-api-example-id',
-            'openapi' => '',
+            'openapi' => '{{other-example-openapi}}',
         ],
     ]);
 
     $result = $apiboard->api('example');
 
     expect($result)->toBeInstanceOf(Api::class);
-    expect($result->id())->toBe('api-example-id');
+    expect($result->openapi())->toEqual('{{example-openapi}}');
 });
 
 test('it can be disabled and enabled', function () {

@@ -15,8 +15,6 @@ use Psr\Log\LoggerInterface;
 
 class Api
 {
-    protected string $id;
-
     protected string $openapi;
 
     protected LoggerInterface $logger;
@@ -25,17 +23,11 @@ class Api
 
     protected ?Document $document = null;
 
-    public function __construct(string $id, string $openapi, LoggerInterface $logger, Closure $checkRunner)
+    public function __construct(string $openapi, LoggerInterface $logger, Closure $checkRunner)
     {
-        $this->id = $id;
         $this->openapi = $openapi;
         $this->logger = $logger;
         $this->checkRunner = $checkRunner;
-    }
-
-    public function id(): string
-    {
-        return $this->id;
     }
 
     public function openapi(): string
