@@ -89,12 +89,10 @@ class Endpoint
             return false;
         }
 
+        $request = $request->withUri($request->getUri()->withQuery(''));
+
         $endpointUrl = $this->url();
         $requestUrl = (string) $request->getUri();
-
-        if (str_ends_with($endpointUrl, '/')) {
-            $requestUrl = rtrim($requestUrl, '/').'/';
-        }
 
         $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $endpointUrl);
         $pattern = "^$pattern$";
