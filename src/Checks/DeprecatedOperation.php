@@ -28,7 +28,7 @@ class DeprecatedOperation implements Check
         if ($this->endpoint->matches($this->request)) {
             $results[] = new Result(
                 LogLevel::WARNING,
-                "Deprecated operation used.",
+                'Deprecated operation used.',
                 [
                     'pointer' => $this->endpoint->operation()->pointer()?->value(),
                 ],

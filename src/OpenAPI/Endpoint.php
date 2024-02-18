@@ -34,7 +34,7 @@ class Endpoint
 
     public function url(): string
     {
-        return $this->server?->url() . $this->path->uri();
+        return $this->server?->url().$this->path->uri();
     }
 
     public function deprecated(): bool
