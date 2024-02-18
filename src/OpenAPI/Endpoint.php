@@ -89,9 +89,16 @@ class Endpoint
             return false;
         }
 
-        $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $this->url());
+        $endpointUrl = $this->url();
+        $requestUrl = (string) $request->getUri();
+
+        if (str_ends_with($endpointUrl, '/')) {
+            $requestUrl = rtrim($requestUrl, '/').'/';
+        }
+
+        $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $endpointUrl);
         $pattern = "^$pattern$";
 
-        return (bool) preg_match("#$pattern#", $request->getUri());
+        return (bool) preg_match("#$pattern#", $requestUrl);
     }
 }
