@@ -5,6 +5,8 @@ namespace Apiboard;
 use Apiboard\Checks\Checks;
 use Apiboard\Logging\Sampler;
 use Closure;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -63,15 +65,38 @@ class Apiboard
         $this->logResolverCallback = $callback;
     }
 
-    public function api(string $id): Api
+    public function api(string $name): Api
     {
-        $api = $this->apis[$id];
+        $api = $this->apis[$name];
+
+        $sampler = new Sampler(
+            $api['sample_rate'] ?? 1,
+            $this->resolveChecksRunner(),
+        );
 
         return new Api(
             $api['openapi'],
             $this->resolveLogger($api['channel'] ?? null),
-            $this->resolveChecksRunner($api['sample_rate'] ?? 1),
+            fn (Checks $checks) => $sampler->__invoke($checks)
         );
+    }
+
+    public function inspect(string $name, RequestInterface $request, ?ResponseInterface $response = null): void
+    {
+        $config = $this->apis[$name];
+
+        $api = new Api(
+            $config['openapi'],
+            $this->resolveLogger($config['channel'] ?? null),
+            $this->resolveChecksRunner(),
+        );
+
+        $sampler = new Sampler(
+            $config['sample_rate'] ?? 1,
+            fn () => $api->inspect($request, $response),
+        );
+
+        $sampler->__invoke();
     }
 
     protected function resolveLogger(string|LoggerInterface|null $logger): LoggerInterface
@@ -85,18 +110,16 @@ class Apiboard
         };
     }
 
-    protected function resolveChecksRunner(int|float $rate): Closure
+    protected function resolveChecksRunner(): Closure
     {
         if ($this->isDisabled()) {
             return fn () => null;
         }
 
-        $sampler = new Sampler($rate, $this->runChecksCallback);
-
-        return function (Checks $checks) use ($sampler) {
+        return function (Checks $checks) {
             ($this->beforeRunningChecks)($checks);
 
-            $sampler->__invoke($checks);
+            ($this->runChecksCallback)($checks);
         };
     }
 }
