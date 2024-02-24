@@ -4,7 +4,8 @@ namespace Tests\Builders;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
-use PsrDiscovery\Discover;
+use PsrMock\Psr17\RequestFactory;
+use PsrMock\Psr17\StreamFactory;
 
 class PsrRequestBuilder extends Builder
 {
@@ -34,7 +35,7 @@ class PsrRequestBuilder extends Builder
 
     public function body(string $body): self
     {
-        $factory = Discover::httpStreamFactory();
+        $factory = (new StreamFactory());
 
         $this->body = $factory->createStream($body);
 
@@ -74,7 +75,7 @@ class PsrRequestBuilder extends Builder
 
     public function make(): RequestInterface
     {
-        $request = Discover::httpRequestFactory()
+        $request = (new RequestFactory())
             ->createRequest($this->method, $this->uri.$this->query);
 
         foreach ($this->headers as $name => $value) {

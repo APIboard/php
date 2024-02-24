@@ -5,6 +5,7 @@ namespace Tests\Builders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use PsrDiscovery\Discover;
+use PsrMock\Psr17\ResponseFactory;
 
 class PsrResponseBuilder extends Builder
 {
@@ -39,7 +40,7 @@ class PsrResponseBuilder extends Builder
 
     public function make(): ResponseInterface
     {
-        $response = Discover::httpResponseFactory()
+        $response = (new ResponseFactory())
             ->createResponse($this->status);
 
         foreach ($this->headers as $name => $value) {
