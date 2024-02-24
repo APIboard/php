@@ -17,11 +17,6 @@ class DeprecatedParameters implements Check
         $this->parameters = $parameters;
     }
 
-    public function id(): string
-    {
-        return 'deprecated-parameters';
-    }
-
     public function run(): array
     {
         $results = [];
