@@ -54,10 +54,8 @@ class Checks
 
             foreach ($results as $result) {
                 $this->logger->log($result->severity(), $result->summary(), [
-                    'endpoint' => [
-                        'method' => $this->endpoint->method(),
-                        'url' => $this->endpoint()->url(),
-                    ],
+                    'method' => $this->endpoint->method(),
+                    'url' => $this->endpoint()->url(),
                     'check' => get_class($check),
                     'details' => $result->details(),
                 ]);
