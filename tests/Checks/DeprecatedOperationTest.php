@@ -3,9 +3,10 @@
 namespace Tests\Checks;
 
 use Apiboard\Checks\DeprecatedOperation;
-use Apiboard\Checks\Result;
+use Apiboard\Checks\Results\Result;
 use Apiboard\OpenAPI\Endpoint;
 use Psr\Http\Message\RequestInterface;
+use Tests\Builders\ContextBuilder;
 use Tests\Builders\EndpointBuilder;
 use Tests\Builders\PsrRequestBuilder;
 
@@ -18,10 +19,13 @@ it('returns no results when the operation is not deprecated', function () {
     $endpoint = EndpointBuilder::new()
         ->deprecated(false)
         ->make();
+    $context = ContextBuilder::new()
+        ->endpoint($endpoint)
+        ->make();
 
-    $result = deprecatedOperation($endpoint)->run();
+    $context = deprecatedOperation()->run($context);
 
-    expect($result)->toBeEmpty();
+    expect($context->results())->toBeEmpty();
 });
 
 it('returns a result when the operation is deprecated and the message matches the endpoint', function () {
@@ -34,13 +38,16 @@ it('returns a result when the operation is deprecated and the message matches th
         ->method('GET')
         ->uri('/foo/baz')
         ->make();
-    $check = deprecatedOperation($endpoint);
-    $check->message($request);
+    $context = ContextBuilder::new()
+        ->endpoint($endpoint)
+        ->make();
+    $check = deprecatedOperation();
+    $check->request($request);
 
-    $result = $check->run();
+    $context = $check->run($context);
 
-    expect($result)->toHaveCount(1);
-    expect($result[0])->toBeInstanceOf(Result::class);
+    expect($context->results())->toHaveCount(1);
+    expect($context->results()[0])->toBeInstanceOf(Result::class);
 });
 
 it(
@@ -50,11 +57,14 @@ it(
         RequestInterface $request,
     ) {
         $check = deprecatedOperation($endpoint);
-        $check->message($request);
+        $check->request($request);
+        $context = ContextBuilder::new()
+            ->endpoint($endpoint)
+            ->make();
 
-        $result = $check->run();
+        $context = $check->run($context);
 
-        expect($result)->toHaveCount(0);
+        expect($context->results())->toHaveCount(0);
     }
 )->with([
     'different method' => [

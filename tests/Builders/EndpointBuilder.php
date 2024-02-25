@@ -4,6 +4,7 @@ namespace Tests\Builders;
 
 use Apiboard\OpenAPI\Endpoint;
 use Apiboard\OpenAPI\Structure\Operation;
+use Apiboard\OpenAPI\Structure\Parameter;
 use Apiboard\OpenAPI\Structure\PathItem;
 use Apiboard\OpenAPI\Structure\Response;
 use Apiboard\OpenAPI\Structure\Schema;
@@ -42,57 +43,11 @@ class EndpointBuilder extends Builder
         return $this;
     }
 
-    public function deprecatedPathHeader(string $name): self
+    public function parameters(Parameter ...$parameters): self
     {
-        $this->path['parameters'][] = [
-            'in' => 'header',
-            'name' => $name,
-            'deprecated' => true,
-        ];
-
-        return $this;
-    }
-
-    public function deprecatedOperationHeaderParameter(string $name): self
-    {
-        $this->operation['parameters'][] = [
-            'in' => 'header',
-            'name' => $name,
-            'deprecated' => true,
-        ];
-
-        return $this;
-    }
-
-    public function deprecatedPathParameter(string $name): self
-    {
-        $this->path['parameters'][] = [
-            'in' => 'path',
-            'name' => $name,
-            'deprecated' => true,
-        ];
-
-        return $this;
-    }
-
-    public function deprecatedPathQueryParameter(string $name): self
-    {
-        $this->path['parameters'][] = [
-            'in' => 'query',
-            'name' => $name,
-            'deprecated' => true,
-        ];
-
-        return $this;
-    }
-
-    public function deprecatedOperationQueryParameter(string $name): self
-    {
-        $this->operation['parameters'][] = [
-            'in' => 'query',
-            'name' => $name,
-            'deprecated' => true,
-        ];
+        foreach ($parameters as $parameter) {
+            $this->operation['parameters'][] = $parameter->toArray();
+        }
 
         return $this;
     }

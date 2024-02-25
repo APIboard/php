@@ -3,25 +3,22 @@
 namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
-use Apiboard\OpenAPI\Structure\Parameters;
-use Psr\Log\LogLevel;
+use Apiboard\Checks\Results\Context;
+use Apiboard\Checks\Results\Result;
 
 class DeprecatedParameters implements Check
 {
     use AcceptsRequest;
 
-    protected Parameters $parameters;
-
-    public function __construct(Parameters $parameters)
+    public function run(Context $context): Context
     {
-        $this->parameters = $parameters;
-    }
+        $parameters = $context->endpoint()?->parameters();
 
-    public function run(): array
-    {
-        $results = [];
+        if ($parameters === null) {
+            return $context;
+        }
 
-        foreach ($this->parameters as $parameter) {
+        foreach ($parameters as $parameter) {
             if ($parameter->deprecated() === false) {
                 continue;
             }
@@ -34,16 +31,12 @@ class DeprecatedParameters implements Check
             };
 
             if ($isUsed) {
-                $results[] = new Result(
-                    LogLevel::WARNING,
-                    "Deprecated {$parameter->in()} parameter [{$parameter->name()}] used.",
-                    [
-                        'pointer' => $parameter->pointer()?->value(),
-                    ],
+                $context->add(
+                    Result::new($this, $parameter),
                 );
             }
         }
 
-        return $results;
+        return $context;
     }
 }

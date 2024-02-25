@@ -9,8 +9,8 @@ trait AcceptsResponse
 {
     protected ResponseInterface $response;
 
-    public function message(MessageInterface $message): void
+    public function message(MessageInterface $response): void
     {
-        $this->response = $message;
+        $this->response = $response;
     }
 }

@@ -2,33 +2,45 @@
 
 namespace Tests\Checks;
 
-use Apiboard\OpenAPI\Endpoint;
-use Psr\Http\Message\MessageInterface;
+use Apiboard\Api;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Tests\Builders\ChecksBuilder;
-use Tests\Builders\PsrRequestBuilder;
 use Tests\Builders\PsrResponseBuilder;
 use Tests\Builders\ResultBuilder;
 
-test('it can return the endpoint', function () {
+test('it can return the api', function () {
     $checks = ChecksBuilder::new()->make();
 
-    $result = $checks->endpoint();
+    $result = $checks->api();
 
-    expect($result)->toBeInstanceOf(Endpoint::class);
+    expect($result)->toBeInstanceOf(Api::class);
 });
 
-test('it can return the message', function () {
+test('it can return the request', function () {
     $checks = ChecksBuilder::new()->make();
 
-    $result = $checks->message();
+    $result = $checks->request();
 
-    expect($result)->toBeInstanceOf(MessageInterface::class);
+    expect($result)->toBeInstanceOf(RequestInterface::class);
+});
+
+test('it can return the response', function () {
+    $checks = ChecksBuilder::new()
+        ->response(PsrResponseBuilder::new()->make())
+        ->make();
+
+    $result = $checks->response();
+
+    expect($result)->toBeInstanceOf(ResponseInterface::class);
 });
 
 test('it logs the results for every check added when invoked', function () {
     $logger = arrayLogger();
     $check = testCheck();
-    $check->addResult(ResultBuilder::new()->make());
+    $check->addResult(
+        ResultBuilder::new()->check($check)->make()
+    );
     $checks = ChecksBuilder::new()
         ->logger($logger)
         ->make();
@@ -36,17 +48,4 @@ test('it logs the results for every check added when invoked', function () {
     $checks->add($check)->__invoke();
 
     $logger->assertNotEmpty();
-});
-
-test('it always uses the message defined on the instance on every check', function () {
-    $request = PsrRequestBuilder::new()->make();
-    $check = testCheck();
-    $check->message(PsrResponseBuilder::new()->make());
-    $checks = ChecksBuilder::new()
-        ->message($request)
-        ->make();
-
-    $checks->add($check)->__invoke();
-
-    $check->assertUsingMessage($request);
 });

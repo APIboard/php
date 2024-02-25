@@ -2,38 +2,52 @@
 
 namespace Apiboard\Checks;
 
-use Apiboard\OpenAPI\Endpoint;
-use Psr\Http\Message\MessageInterface;
-use Psr\Log\LoggerInterface;
+use Apiboard\Api;
+use Apiboard\Checks\Results\Context;
+use Apiboard\Logging\Logger;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Checks
 {
-    protected Endpoint $endpoint;
+    protected Api $api;
 
-    protected LoggerInterface $logger;
+    protected Logger $logger;
 
-    protected MessageInterface $message;
+    protected RequestInterface $request;
+
+    protected ?ResponseInterface $response;
 
     /**
      * @var array<array-key,Check>
      */
     protected array $checks = [];
 
-    public function __construct(Endpoint $endpoint, LoggerInterface $logger, MessageInterface $message)
-    {
-        $this->endpoint = $endpoint;
+    public function __construct(
+        Api $api,
+        Logger $logger,
+        RequestInterface $request,
+        ?ResponseInterface $response,
+    ) {
+        $this->api = $api;
         $this->logger = $logger;
-        $this->message = $message;
+        $this->request = $request;
+        $this->response = $response;
     }
 
-    public function endpoint(): Endpoint
+    public function api(): Api
     {
-        return $this->endpoint;
+        return $this->api;
     }
 
-    public function message(): MessageInterface
+    public function request(): RequestInterface
     {
-        return $this->message;
+        return $this->request;
+    }
+
+    public function response(): ?ResponseInterface
+    {
+        return $this->response;
     }
 
     public function add(Check ...$checks): self
@@ -47,19 +61,24 @@ class Checks
 
     public function __invoke(): void
     {
+        $endpoint = $this->api->matchingEndpoint($this->request);
+
+        $context = new Context($this->api(), $endpoint);
+
         foreach ($this->checks as $check) {
-            $check->message($this->message);
+            $this->callIfExists($check, 'request');
+            $this->callIfExists($check, 'response');
 
-            $results = $check->run();
+            $check->run($context);
+        }
 
-            foreach ($results as $result) {
-                $this->logger->log($result->severity(), $result->summary(), [
-                    'method' => $this->endpoint->method(),
-                    'url' => $this->endpoint()->url(),
-                    'check' => get_class($check),
-                    'details' => $result->details(),
-                ]);
-            }
+        $this->logger->process($context);
+    }
+
+    protected function callIfExists(Check $check, string $method): void
+    {
+        if (method_exists($check, $method)) {
+            $check->{$method}($this->{$method});
         }
     }
 }

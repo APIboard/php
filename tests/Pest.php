@@ -1,10 +1,9 @@
 <?php
 
 use Apiboard\Checks\Check;
-use Apiboard\Checks\Result;
-use Psr\Http\Message\MessageInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
+use Apiboard\Checks\Results\Context;
+use Apiboard\Checks\Results\Result;
+use Apiboard\Logging\Logger;
 
 function arrayLogger(): ArrayLogger
 {
@@ -16,10 +15,8 @@ function testCheck(): TestCheck
     return new TestCheck();
 }
 
-class ArrayLogger implements LoggerInterface
+class ArrayLogger implements Logger
 {
-    use LoggerTrait;
-
     /**
      * @var array<string, array>
      */
@@ -30,25 +27,15 @@ class ArrayLogger implements LoggerInterface
         expect($this->logged)->not->toBeEmpty();
     }
 
-    public function log($level, string|Stringable $message, array $context = []): void
+    public function process(Context $context): void
     {
-        $this->logged[$level][] = [
-            'message' => $message,
-            'context' => $context,
-        ];
+        $this->logged[] = $context;
     }
 }
 
 class TestCheck implements Check
 {
-    protected ?MessageInterface $message = null;
-
     protected array $results = [];
-
-    public function message(MessageInterface $message): void
-    {
-        $this->message = $message;
-    }
 
     public function addResult(Result $result): self
     {
@@ -57,14 +44,12 @@ class TestCheck implements Check
         return $this;
     }
 
-    public function run(): array
+    public function run(Context $context): Context
     {
-        return $this->results;
-    }
+        foreach ($this->results as $result) {
+            $context->add($result);
+        }
 
-    public function assertUsingMessage(MessageInterface $message): void
-    {
-        expect($this->message)->not->toBeNull();
-        expect($this->message)->toBe($message);
+        return $context;
     }
 }

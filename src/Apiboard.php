@@ -3,12 +3,14 @@
 namespace Apiboard;
 
 use Apiboard\Checks\Checks;
+use Apiboard\Checks\DeprecatedOperation;
+use Apiboard\Checks\DeprecatedParameters;
+use Apiboard\Logging\Logger;
+use Apiboard\Logging\NullLogger;
 use Apiboard\Logging\Sampler;
 use Closure;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class Apiboard
 {
@@ -27,7 +29,7 @@ class Apiboard
         $this->apis = $apis;
         $this->beforeRunningChecks = fn () => null;
         $this->runChecksCallback = fn (Checks $checks) => $checks->__invoke();
-        $this->logResolverCallback = fn () => new NullLogger();
+        $this->logResolverCallback = fn () => new NullLogger;
     }
 
     public function beforeRunningChecks(Closure $beforeRunningChecks): void
@@ -65,61 +67,40 @@ class Apiboard
         $this->logResolverCallback = $callback;
     }
 
-    public function api(string $name): Api
-    {
-        $api = $this->apis[$name];
-
-        $sampler = new Sampler(
-            $api['sample_rate'] ?? 1,
-            $this->resolveChecksRunner(),
-        );
-
-        return new Api(
-            $api['openapi'],
-            $this->resolveLogger($api['channel'] ?? null),
-            fn (Checks $checks) => $sampler->__invoke($checks)
-        );
-    }
-
     public function inspect(string $name, RequestInterface $request, ?ResponseInterface $response = null): void
     {
+        if ($this->isDisabled()) {
+            return;
+        }
+
         $config = $this->apis[$name];
 
-        $api = new Api(
-            $config['openapi'],
-            $this->resolveLogger($config['channel'] ?? null),
-            $this->resolveChecksRunner(),
+        $api = new Api($name, $config['openapi']);
+
+        $checks = new Checks(
+            $api,
+            $this->resolveLogger($config['logger'] ?? null),
+            $request,
+            $response,
         );
 
-        $sampler = new Sampler(
-            $config['sample_rate'] ?? 1,
-            fn () => $api->inspect($request, $response),
-        );
+        $checks->add(new DeprecatedOperation);
+        $checks->add(new DeprecatedParameters);
 
-        $sampler->__invoke();
+        ($this->beforeRunningChecks)($checks);
+
+        $sampler = new Sampler($config['sample_rate'] ?? 1, $this->runChecksCallback);
+
+        $sampler->__invoke($checks);
     }
 
-    protected function resolveLogger(string|LoggerInterface|null $logger): LoggerInterface
+    protected function resolveLogger(string|Logger|null $logger): Logger
     {
         $logResolver = $this->logResolverCallback;
 
         return match (true) {
-            $this->isDisabled() => new NullLogger(),
-            $logger instanceof LoggerInterface => $logger,
+            $logger instanceof Logger => $logger,
             default => $logResolver($logger),
-        };
-    }
-
-    protected function resolveChecksRunner(): Closure
-    {
-        if ($this->isDisabled()) {
-            return fn () => null;
-        }
-
-        return function (Checks $checks) {
-            ($this->beforeRunningChecks)($checks);
-
-            ($this->runChecksCallback)($checks);
         };
     }
 }

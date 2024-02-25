@@ -2,14 +2,10 @@
 
 namespace Apiboard\OpenAPI;
 
-use Apiboard\Checks\DeprecatedOperation;
-use Apiboard\Checks\DeprecatedParameters;
-use Apiboard\Checks\DeprecatedRequestBody;
 use Apiboard\OpenAPI\Structure\Operation;
 use Apiboard\OpenAPI\Structure\Parameters;
 use Apiboard\OpenAPI\Structure\PathItem;
 use Apiboard\OpenAPI\Structure\Server;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
 class Endpoint
@@ -59,28 +55,6 @@ class Endpoint
     public function operation(): Operation
     {
         return $this->operation;
-    }
-
-    /**
-     * @return array<array-key,Check>
-     */
-    public function checksFor(MessageInterface $message): array
-    {
-        $checks = [];
-
-        if ($message instanceof RequestInterface) {
-            $checks[] = new DeprecatedOperation($this);
-
-            if ($this->parameters()) {
-                $checks[] = new DeprecatedParameters($this->parameters());
-            }
-
-            if ($this->operation->requestBody()) {
-                $checks[] = new DeprecatedRequestBody($this->operation->requestBody());
-            }
-        }
-
-        return $checks;
     }
 
     public function matches(RequestInterface $request): bool

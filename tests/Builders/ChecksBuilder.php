@@ -2,30 +2,40 @@
 
 namespace Tests\Builders;
 
+use Apiboard\Api;
 use Apiboard\Checks\Checks;
-use Apiboard\OpenAPI\Endpoint;
-use Psr\Http\Message\MessageInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
+use Apiboard\Logging\Logger;
+use Apiboard\Logging\NullLogger;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ChecksBuilder extends Builder
 {
-    protected ?Endpoint $endpoint = null;
+    protected ?Api $api = null;
 
-    protected ?LoggerInterface $logger = null;
+    protected ?Logger $logger = null;
 
-    protected ?MessageInterface $message = null;
+    protected ?RequestInterface $request = null;
 
-    public function logger(LoggerInterface $logger): self
+    protected ?ResponseInterface $response = null;
+
+    public function logger(Logger $logger): self
     {
         $this->logger = $logger;
 
         return $this;
     }
 
-    public function message(MessageInterface $message): self
+    public function request(RequestInterface $request): self
     {
-        $this->message = $message;
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public function response(ResponseInterface $response): self
+    {
+        $this->response = $response;
 
         return $this;
     }
@@ -33,9 +43,10 @@ class ChecksBuilder extends Builder
     public function make(): Checks
     {
         return new Checks(
-            $this->endpoint ?? EndpointBuilder::new()->make(),
+            $this->api ?? ApiBuilder::new()->make(),
             $this->logger ?? new NullLogger(),
-            $this->message ?? PsrRequestBuilder::new()->make(),
+            $this->request ?? PsrRequestBuilder::new()->make(),
+            $this->response,
         );
     }
 }

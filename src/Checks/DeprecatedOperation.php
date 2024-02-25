@@ -3,38 +3,31 @@
 namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
-use Apiboard\OpenAPI\Endpoint;
-use Psr\Log\LogLevel;
+use Apiboard\Checks\Results\Context;
+use Apiboard\Checks\Results\Result;
 
 class DeprecatedOperation implements Check
 {
     use AcceptsRequest;
 
-    protected Endpoint $endpoint;
-
-    public function __construct(Endpoint $endpoint)
+    public function run(Context $context): Context
     {
-        $this->endpoint = $endpoint;
-    }
+        $endpoint = $context->endpoint();
 
-    public function run(): array
-    {
-        $results = [];
-
-        if ($this->endpoint->deprecated() === false) {
-            return $results;
+        if ($endpoint === null) {
+            return $context;
         }
 
-        if ($this->endpoint->matches($this->request)) {
-            $results[] = new Result(
-                LogLevel::WARNING,
-                'Deprecated operation used.',
-                [
-                    'pointer' => $this->endpoint->operation()->pointer()?->value(),
-                ],
+        if ($endpoint->deprecated() === false) {
+            return $context;
+        }
+
+        if ($endpoint->matches($this->request)) {
+            $context->add(
+                Result::new($this, $endpoint->operation()),
             );
         }
 
-        return $results;
+        return $context;
     }
 }
