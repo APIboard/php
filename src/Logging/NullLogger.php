@@ -9,4 +9,8 @@ class NullLogger implements Logger
     public function process(Context $context): void
     {
     }
+
+    public function trim(): void
+    {
+    }
 }
