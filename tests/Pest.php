@@ -31,6 +31,10 @@ class ArrayLogger implements Logger
     {
         $this->logged[] = $context;
     }
+
+    public function trim(): void
+    {
+    }
 }
 
 class TestCheck implements Check
