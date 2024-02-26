@@ -20,9 +20,9 @@ class Result
         $this->date = new DateTime();
     }
 
-    public static function new(Check $check, array $context): self
+    public static function new(Check $check, array $details = []): self
     {
-        return new self($check, $context);
+        return new self($check, $details);
     }
 
     public function check(): string

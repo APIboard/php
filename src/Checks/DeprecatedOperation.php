@@ -24,10 +24,7 @@ class DeprecatedOperation implements Check
 
         if ($endpoint->matches($this->request)) {
             $context->add(
-                Result::new($this, [
-                    'method' => $endpoint->method(),
-                    'url' => $endpoint->url(),
-                ]),
+                Result::new($this),
             );
         }
 
