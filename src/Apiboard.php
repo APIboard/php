@@ -2,6 +2,7 @@
 
 namespace Apiboard;
 
+use Apiboard\Checks\Check;
 use Apiboard\Checks\Checks;
 use Apiboard\Checks\DeprecatedOperation;
 use Apiboard\Checks\DeprecatedParameters;
@@ -14,6 +15,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class Apiboard
 {
+    protected array $checks;
+
     protected array $apis;
 
     protected bool $enabled = true;
@@ -26,15 +29,14 @@ class Apiboard
 
     public function __construct(array $apis)
     {
-        $this->apis = $apis;
         $this->beforeRunningChecks = fn () => null;
         $this->runChecksCallback = fn (Checks $checks) => $checks->__invoke();
         $this->logResolverCallback = fn () => new NullLogger;
-    }
-
-    public function beforeRunningChecks(Closure $beforeRunningChecks): void
-    {
-        $this->beforeRunningChecks = $beforeRunningChecks;
+        $this->apis = $apis;
+        $this->checks = [
+            new DeprecatedOperation,
+            new DeprecatedParameters,
+        ];
     }
 
     public function disable(): void
@@ -55,6 +57,13 @@ class Apiboard
     public function isEnabled(): bool
     {
         return $this->enabled === true;
+    }
+
+    public function addChecks(Check ...$checks): void
+    {
+        foreach ($checks as $check) {
+            $this->checks[] = $check;
+        }
     }
 
     public function runChecksUsing(Closure $callback): void
@@ -84,10 +93,9 @@ class Apiboard
             $response,
         );
 
-        $checks->add(new DeprecatedOperation);
-        $checks->add(new DeprecatedParameters);
-
-        ($this->beforeRunningChecks)($checks);
+        foreach ($this->checks as $check) {
+            $checks->add($check);
+        }
 
         $sampler = new Sampler($config['sample_rate'] ?? 1, $this->runChecksCallback);
 
