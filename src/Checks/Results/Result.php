@@ -28,7 +28,7 @@ class Result
 
     public function check(): string
     {
-        return get_class($this->check);
+        return substr(strrchr(get_class($this->check), '\\'), 1);
     }
 
     public function structure(): ?Structure
