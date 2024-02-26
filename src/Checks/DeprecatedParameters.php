@@ -32,7 +32,10 @@ class DeprecatedParameters implements Check
 
             if ($isUsed) {
                 $context->add(
-                    Result::new($this, $parameter),
+                    Result::new($this, [
+                        'name' => $parameter->name(),
+                        'in' => $parameter->in(),
+                    ]),
                 );
             }
         }

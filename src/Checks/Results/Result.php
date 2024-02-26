@@ -10,20 +10,20 @@ class Result
 {
     protected Check $check;
 
-    protected ?Structure $structure;
+    protected array $details;
 
     protected DateTime $date;
 
-    private function __construct(Check $check, ?Structure $structure)
+    private function __construct(Check $check, array $details)
     {
         $this->check = $check;
-        $this->structure = $structure;
+        $this->details = $details;
         $this->date = new DateTime();
     }
 
-    public static function new(Check $check, ?Structure $structure = null): self
+    public static function new(Check $check, array $context): self
     {
-        return new self($check, $structure);
+        return new self($check, $context);
     }
 
     public function check(): string
@@ -31,9 +31,9 @@ class Result
         return substr(strrchr(get_class($this->check), '\\'), 1);
     }
 
-    public function structure(): ?Structure
+    public function details(): array
     {
-        return $this->structure;
+        return $this->details;
     }
 
     public function date(): DateTime
