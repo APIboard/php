@@ -3,7 +3,6 @@
 namespace Apiboard\Checks\Results;
 
 use Apiboard\Checks\Check;
-use Apiboard\OpenAPI\Structure\Structure;
 use DateTime;
 
 class Result

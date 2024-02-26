@@ -43,4 +43,15 @@ class Context
     {
         return $this->results;
     }
+
+    public function hashForResult(Result $result): string
+    {
+        $content = json_encode($result->details());
+
+        if ($this->endpoint()) {
+            $content = "{$this->endpoint()->method()}{$this->endpoint()->url()}{$content}";
+        }
+
+        return md5($content);
+    }
 }
