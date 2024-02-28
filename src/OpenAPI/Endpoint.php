@@ -28,6 +28,11 @@ class Endpoint
         return strtoupper($this->operation->method());
     }
 
+    public function path(): string
+    {
+        return $this->path->uri();
+    }
+
     public function url(): string
     {
         return $this->server?->url().$this->path->uri();
