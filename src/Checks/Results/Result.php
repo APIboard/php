@@ -25,9 +25,9 @@ class Result
         return new self($check, $details);
     }
 
-    public function check(): string
+    public function check(): Check
     {
-        return substr(strrchr(get_class($this->check), '\\'), 1);
+        return $this->check;
     }
 
     public function details(): array

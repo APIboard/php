@@ -10,6 +10,11 @@ class UsedOperation implements Check
 {
     use AcceptsRequest;
 
+    public function id(): string
+    {
+        return 'used-operation';
+    }
+
     public function run(Context $context): Context
     {
         $endpoint = $context->endpoint();

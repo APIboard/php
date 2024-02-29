@@ -10,6 +10,11 @@ class UsedParameters implements Check
 {
     use AcceptsRequest;
 
+    public function id(): string
+    {
+        return 'used-parameters';
+    }
+
     public function run(Context $context): Context
     {
         $parameters = $context->endpoint()?->parameters();

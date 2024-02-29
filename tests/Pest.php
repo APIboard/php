@@ -54,6 +54,11 @@ class TestCheck implements Check
         return $this;
     }
 
+    public function id(): string
+    {
+        return 'test-check';
+    }
+
     public function run(Context $context): Context
     {
         foreach ($this->results as $result) {
