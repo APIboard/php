@@ -6,7 +6,7 @@ use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\Result;
 
-class DeprecatedOperation implements Check
+class UsedOperation implements Check
 {
     use AcceptsRequest;
 
@@ -18,15 +18,12 @@ class DeprecatedOperation implements Check
             return $context;
         }
 
-        if ($endpoint->deprecated() === false) {
-            return $context;
-        }
-
         if ($endpoint->matches($this->request)) {
             $context->add(
                 Result::new($this, [
                     'method' => $endpoint->method(),
                     'path' => $endpoint->path(),
+                    'deprecated' => true,
                 ]),
             );
         }

@@ -6,7 +6,7 @@ use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\Result;
 
-class DeprecatedParameters implements Check
+class UsedParameters implements Check
 {
     use AcceptsRequest;
 
@@ -19,10 +19,6 @@ class DeprecatedParameters implements Check
         }
 
         foreach ($parameters as $parameter) {
-            if ($parameter->deprecated() === false) {
-                continue;
-            }
-
             $isUsed = match ($parameter->in()) {
                 'header' => $this->request->hasHeader($parameter->name()),
                 'query' => str_contains($this->request->getUri()->getQuery(), "{$parameter->name()}="),
@@ -35,6 +31,7 @@ class DeprecatedParameters implements Check
                     Result::new($this, [
                         'name' => $parameter->name(),
                         'in' => $parameter->in(),
+                        'deprecated' => $parameter->deprecated(),
                     ]),
                 );
             }

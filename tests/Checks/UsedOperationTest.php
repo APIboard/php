@@ -2,37 +2,23 @@
 
 namespace Tests\Checks;
 
-use Apiboard\Checks\DeprecatedOperation;
 use Apiboard\Checks\Results\Result;
+use Apiboard\Checks\UsedOperation;
 use Apiboard\OpenAPI\Endpoint;
 use Psr\Http\Message\RequestInterface;
 use Tests\Builders\ContextBuilder;
 use Tests\Builders\EndpointBuilder;
 use Tests\Builders\PsrRequestBuilder;
 
-function deprecatedOperation(...$args)
+function usedOperation()
 {
-    return new DeprecatedOperation(...$args);
+    return new UsedOperation();
 }
 
-it('returns no results when the operation is not deprecated', function () {
-    $endpoint = EndpointBuilder::new()
-        ->deprecated(false)
-        ->make();
-    $context = ContextBuilder::new()
-        ->endpoint($endpoint)
-        ->make();
-
-    $context = deprecatedOperation()->run($context);
-
-    expect($context->results())->toBeEmpty();
-});
-
-it('returns a result when the operation is deprecated and the message matches the endpoint', function () {
+it('returns a result when the operation and the message matches the endpoint', function () {
     $endpoint = EndpointBuilder::new()
         ->method('GET')
         ->uri('/foo/{bar}')
-        ->deprecated(true)
         ->make();
     $request = PsrRequestBuilder::new()
         ->method('GET')
@@ -41,7 +27,7 @@ it('returns a result when the operation is deprecated and the message matches th
     $context = ContextBuilder::new()
         ->endpoint($endpoint)
         ->make();
-    $check = deprecatedOperation();
+    $check = usedOperation();
     $check->request($request);
 
     $context = $check->run($context);
@@ -51,12 +37,12 @@ it('returns a result when the operation is deprecated and the message matches th
 });
 
 it(
-    'returns no results when the operation is deprecated and the message does not match the endpoint',
+    'returns no results when the operation and the message does not match the endpoint',
     function (
         Endpoint $endpoint,
         RequestInterface $request,
     ) {
-        $check = deprecatedOperation($endpoint);
+        $check = usedOperation($endpoint);
         $check->request($request);
         $context = ContextBuilder::new()
             ->endpoint($endpoint)
@@ -69,7 +55,6 @@ it(
 )->with([
     'different method' => [
         EndpointBuilder::new()
-            ->deprecated()
             ->method('POST')
             ->make(),
         PsrRequestBuilder::new()
@@ -78,7 +63,6 @@ it(
     ],
     'different uri' => [
         EndpointBuilder::new()
-            ->deprecated()
             ->method('GET')
             ->uri('/foo/{bar}')
             ->make(),

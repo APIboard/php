@@ -4,8 +4,8 @@ namespace Apiboard;
 
 use Apiboard\Checks\Check;
 use Apiboard\Checks\Checks;
-use Apiboard\Checks\DeprecatedOperation;
-use Apiboard\Checks\DeprecatedParameters;
+use Apiboard\Checks\UsedOperation;
+use Apiboard\Checks\UsedParameters;
 use Apiboard\Logging\Logger;
 use Apiboard\Logging\NullLogger;
 use Apiboard\Logging\Sampler;
@@ -34,8 +34,8 @@ class Apiboard
         $this->logResolverCallback = fn () => new NullLogger;
         $this->apis = $apis;
         $this->checks = [
-            new DeprecatedOperation,
-            new DeprecatedParameters,
+            new UsedOperation,
+            new UsedParameters,
         ];
     }
 
