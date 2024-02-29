@@ -9,14 +9,14 @@ class Result
 {
     protected Check $check;
 
-    protected array $details;
+    protected array $data;
 
     protected DateTime $date;
 
-    private function __construct(Check $check, array $details)
+    private function __construct(Check $check, array $data)
     {
         $this->check = $check;
-        $this->details = $details;
+        $this->data = $data;
         $this->date = new DateTime();
     }
 
@@ -30,9 +30,9 @@ class Result
         return $this->check;
     }
 
-    public function details(): array
+    public function data(): array
     {
-        return $this->details;
+        return $this->data;
     }
 
     public function date(): DateTime
