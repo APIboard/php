@@ -4,6 +4,7 @@ use Apiboard\Checks\Check;
 use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\Result;
 use Apiboard\Logging\Logger;
+use Apiboard\Reporting\Reporter;
 
 function arrayLogger(): ArrayLogger
 {
@@ -25,6 +26,11 @@ class ArrayLogger implements Logger
     public function assertNotEmpty(): void
     {
         expect($this->logged)->not->toBeEmpty();
+    }
+
+    public function recap(Reporter $reporter): int
+    {
+        return count($this->logged);
     }
 
     public function process(Context $context): void
