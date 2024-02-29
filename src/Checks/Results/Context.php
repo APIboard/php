@@ -48,6 +48,6 @@ class Context
     {
         $details = json_encode($result->data());
 
-        return md5("{$this->api->name()}:{$result->check()}:{$details}");
+        return md5("{$this->api->id()}:{$result->check()}:{$details}");
     }
 }

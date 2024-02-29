@@ -10,21 +10,21 @@ use Psr\Http\Message\RequestInterface;
 
 class Api
 {
-    protected string $name;
+    protected string $id;
 
     protected string $openapi;
 
     protected ?Document $document = null;
 
-    public function __construct(string $name, string $openapi)
+    public function __construct(string $id, string $openapi)
     {
-        $this->name = $name;
+        $this->id = $id;
         $this->openapi = $openapi;
     }
 
-    public function name(): string
+    public function id(): string
     {
-        return $this->name;
+        return $this->id;
     }
 
     public function openapi(): string
