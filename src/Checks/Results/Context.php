@@ -43,11 +43,4 @@ class Context
     {
         return $this->results;
     }
-
-    public function hashForResult(Result $result): string
-    {
-        $details = json_encode($result->data());
-
-        return md5("{$this->api->id()}:{$result->check()}:{$details}");
-    }
 }

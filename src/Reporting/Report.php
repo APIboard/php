@@ -4,7 +4,7 @@ namespace Apiboard\Reporting;
 
 interface Report
 {
-    public function api(): string;
+    public function id(): string;
 
-    public function hash(): string;
+    public function api(): string;
 }
