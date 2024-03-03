@@ -28,7 +28,7 @@ class UsedOperation implements Check
                 Result::new($this, [
                     'method' => $endpoint->method(),
                     'path' => $endpoint->path(),
-                    'deprecated' => true,
+                    'deprecated' => $endpoint->deprecated(),
                 ]),
             );
         }
