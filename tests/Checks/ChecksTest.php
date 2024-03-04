@@ -7,7 +7,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Tests\Builders\ChecksBuilder;
 use Tests\Builders\PsrResponseBuilder;
-use Tests\Builders\ResultBuilder;
 
 test('it can return the api', function () {
     $checks = ChecksBuilder::new()->make();
@@ -38,9 +37,6 @@ test('it can return the response', function () {
 test('it logs the results for every check added when invoked', function () {
     $logger = arrayLogger();
     $check = testCheck();
-    $check->addResult(
-        ResultBuilder::new()->check($check)->make()
-    );
     $checks = ChecksBuilder::new()
         ->logger($logger)
         ->make();

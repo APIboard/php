@@ -4,7 +4,6 @@ namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
-use Apiboard\Checks\Results\Result;
 
 class UsedParameters implements Check
 {
@@ -32,13 +31,10 @@ class UsedParameters implements Check
             };
 
             if ($isUsed) {
-                $context->add(
-                    Result::new($this, [
-                        'name' => $parameter->name(),
-                        'in' => $parameter->in(),
-                        'deprecated' => $parameter->deprecated(),
-                    ]),
-                );
+                $context->addResult($this, $parameter->jsonSerialize(), [
+                    'name' => $parameter->name(),
+                    'in' => $parameter->in(),
+                ]);
             }
         }
 

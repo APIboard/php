@@ -3,6 +3,7 @@
 namespace Apiboard\Checks\Results;
 
 use Apiboard\Api;
+use Apiboard\Checks\Check;
 use Apiboard\OpenAPI\Endpoint;
 
 class Context
@@ -29,11 +30,9 @@ class Context
         return $this->endpoint;
     }
 
-    public function add(Result ...$results): void
+    public function addResult(Check $check, array $data, array $hash = []): void
     {
-        foreach ($results as $result) {
-            $this->results[] = $result;
-        }
+        $this->results[] = new Result($this->api, $check, $data, $hash);
     }
 
     /**

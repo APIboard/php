@@ -2,7 +2,6 @@
 
 use Apiboard\Checks\Check;
 use Apiboard\Checks\Results\Context;
-use Apiboard\Checks\Results\Result;
 use Apiboard\Logging\Logger;
 use Apiboard\Reporting\Reporter;
 
@@ -45,15 +44,6 @@ class ArrayLogger implements Logger
 
 class TestCheck implements Check
 {
-    protected array $results = [];
-
-    public function addResult(Result $result): self
-    {
-        $this->results[] = $result;
-
-        return $this;
-    }
-
     public function id(): string
     {
         return 'test-check';
@@ -61,9 +51,7 @@ class TestCheck implements Check
 
     public function run(Context $context): Context
     {
-        foreach ($this->results as $result) {
-            $context->add($result);
-        }
+        $context->addResult($this, [], []);
 
         return $context;
     }

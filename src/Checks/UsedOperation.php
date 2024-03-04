@@ -4,7 +4,6 @@ namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
-use Apiboard\Checks\Results\Result;
 
 class UsedOperation implements Check
 {
@@ -24,13 +23,10 @@ class UsedOperation implements Check
         }
 
         if ($endpoint->matches($this->request)) {
-            $context->add(
-                Result::new($this, [
-                    'method' => $endpoint->method(),
-                    'path' => $endpoint->path(),
-                    'deprecated' => $endpoint->deprecated(),
-                ]),
-            );
+            $context->addResult($this, $endpoint->jsonSerialize(), [
+                'method' => $endpoint->operation()->method(),
+                'uri' => $endpoint->path()->uri(),
+            ]);
         }
 
         return $context;

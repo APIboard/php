@@ -2,27 +2,41 @@
 
 namespace Apiboard\Checks\Results;
 
+use Apiboard\Api;
 use Apiboard\Checks\Check;
 use DateTime;
 
 class Result
 {
+    protected Api $api;
+
     protected Check $check;
 
     protected array $data;
 
-    protected DateTime $date;
+    protected array $hash;
 
-    private function __construct(Check $check, array $data)
+    protected DateTime $createdAt;
+
+    public function __construct(Api $api, Check $check, array $data, array $hash)
     {
+        $this->api = $api;
         $this->check = $check;
         $this->data = $data;
-        $this->date = new DateTime();
+        $this->hash = $hash;
+        $this->createdAt = new DateTime();
     }
 
-    public static function new(Check $check, array $data = []): self
+    public function reportId(): string
     {
-        return new self($check, $data);
+        $hash = json_encode($this->hash);
+
+        return md5("{$this->api->id()}:{$this->check->id()}:{$hash}");
+    }
+
+    public function api(): Api
+    {
+        return $this->api;
     }
 
     public function check(): Check
@@ -35,8 +49,8 @@ class Result
         return $this->data;
     }
 
-    public function date(): DateTime
+    public function createdAt(): DateTime
     {
-        return $this->date;
+        return $this->createdAt;
     }
 }

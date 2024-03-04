@@ -6,9 +6,10 @@ use Apiboard\OpenAPI\Structure\Operation;
 use Apiboard\OpenAPI\Structure\Parameters;
 use Apiboard\OpenAPI\Structure\PathItem;
 use Apiboard\OpenAPI\Structure\Server;
+use JsonSerializable;
 use Psr\Http\Message\RequestInterface;
 
-class Endpoint
+class Endpoint implements JsonSerializable
 {
     protected ?Server $server;
 
@@ -28,9 +29,9 @@ class Endpoint
         return strtoupper($this->operation->method());
     }
 
-    public function path(): string
+    public function path(): PathItem
     {
-        return $this->path->uri();
+        return $this->path;
     }
 
     public function url(): string
@@ -77,5 +78,14 @@ class Endpoint
         $pattern = "^$pattern$";
 
         return (bool) preg_match("#$pattern#", $requestUrl);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'server' => $this->server?->jsonSerialize(),
+            'path' => $this->path->jsonSerialize(),
+            'operation' => $this->operation->jsonSerialize(),
+        ];
     }
 }
