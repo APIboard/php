@@ -5,7 +5,7 @@ namespace Apiboard\Checks;
 use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
 
-class UsedOperation implements Check
+class UsedEndpoint implements Check
 {
     use AcceptsRequest;
 

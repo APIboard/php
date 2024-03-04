@@ -4,7 +4,7 @@ namespace Apiboard;
 
 use Apiboard\Checks\Check;
 use Apiboard\Checks\Checks;
-use Apiboard\Checks\UsedOperation;
+use Apiboard\Checks\UsedEndpoint;
 use Apiboard\Checks\UsedParameters;
 use Apiboard\Logging\Logger;
 use Apiboard\Logging\NullLogger;
@@ -34,7 +34,7 @@ class Apiboard
         $this->logResolverCallback = fn () => new NullLogger;
         $this->apis = $apis;
         $this->checks = [
-            new UsedOperation,
+            new UsedEndpoint,
             new UsedParameters,
         ];
     }
