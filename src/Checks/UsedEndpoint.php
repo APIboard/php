@@ -22,12 +22,10 @@ class UsedEndpoint implements Check
             return $context;
         }
 
-        if ($endpoint->matches($this->request)) {
-            $context->addResult($this, $endpoint->jsonSerialize(), [
-                'method' => $endpoint->operation()->method(),
-                'uri' => $endpoint->path()->uri(),
-            ]);
-        }
+        $context->addResult($this, $endpoint->jsonSerialize(), [
+            'method' => $endpoint->operation()->method(),
+            'uri' => $endpoint->path()->uri(),
+        ]);
 
         return $context;
     }
