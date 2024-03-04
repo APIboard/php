@@ -85,6 +85,8 @@ class Endpoint implements JsonSerializable
         return [
             'server' => $this->server?->jsonSerialize(),
             'path' => $this->path->jsonSerialize(),
+            'method' => $this->operation->method(),
+            'uri' => $this->path->uri(),
             'operation' => $this->operation->jsonSerialize(),
         ];
     }

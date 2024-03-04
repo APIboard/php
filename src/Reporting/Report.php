@@ -2,9 +2,22 @@
 
 namespace Apiboard\Reporting;
 
-interface Report
+abstract class Report
 {
-    public function id(): string;
+    protected array $data;
 
-    public function api(): string;
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
+
+    public function id(): string
+    {
+        return $this->data['id'];
+    }
+
+    public function api(): string
+    {
+        return $this->data['api'];
+    }
 }
