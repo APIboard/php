@@ -14,24 +14,14 @@ class Result
 
     protected array $data;
 
-    protected array $hash;
+    protected DateTime $loggedAt;
 
-    protected DateTime $createdAt;
-
-    public function __construct(Api $api, Check $check, array $data, array $hash)
+    public function __construct(Api $api, Check $check, array $data)
     {
         $this->api = $api;
         $this->check = $check;
         $this->data = $data;
-        $this->hash = $hash;
-        $this->createdAt = new DateTime();
-    }
-
-    public function reportId(): string
-    {
-        $hash = json_encode($this->hash);
-
-        return md5("{$this->api->id()}:{$this->check->id()}:{$hash}");
+        $this->loggedAt = new DateTime();
     }
 
     public function api(): Api
@@ -49,8 +39,8 @@ class Result
         return $this->data;
     }
 
-    public function createdAt(): DateTime
+    public function loggedAt(): DateTime
     {
-        return $this->createdAt;
+        return $this->loggedAt;
     }
 }

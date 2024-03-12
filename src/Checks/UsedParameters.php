@@ -31,10 +31,7 @@ class UsedParameters implements Check
             };
 
             if ($isUsed) {
-                $context->addResult($this, $parameter->jsonSerialize(), [
-                    'name' => $parameter->name(),
-                    'in' => $parameter->in(),
-                ]);
+                $context->addResult($this, $parameter->jsonSerialize());
             }
         }
 

@@ -30,9 +30,9 @@ class Context
         return $this->endpoint;
     }
 
-    public function addResult(Check $check, array $data, array $hash = []): void
+    public function addResult(Check $check, array $data): void
     {
-        $this->results[] = new Result($this->api, $check, $data, $hash);
+        $this->results[] = new Result($this->api, $check, $data);
     }
 
     /**
