@@ -2,31 +2,34 @@
 
 namespace Apiboard\OpenAPI;
 
+use Apiboard\OpenAPI\Concerns\MatchesStrings;
 use Apiboard\OpenAPI\Structure\Operation;
 use Apiboard\OpenAPI\Structure\Parameters;
 use Apiboard\OpenAPI\Structure\PathItem;
-use Apiboard\OpenAPI\Structure\Server;
+use Apiboard\OpenAPI\Structure\Servers;
 use JsonSerializable;
 use Psr\Http\Message\RequestInterface;
 
 class Endpoint implements JsonSerializable
 {
-    protected ?Server $server;
+    use MatchesStrings;
+
+    protected ?Servers $servers;
 
     protected PathItem $path;
 
     protected Operation $operation;
 
-    public function __construct(?Server $server, PathItem $path, Operation $operation)
+    public function __construct(?Servers $servers, PathItem $path, Operation $operation)
     {
-        $this->server = $server;
+        $this->servers = $servers;
         $this->path = $path;
         $this->operation = $operation;
     }
 
-    public function method(): string
+    public function servers(): ?Servers
     {
-        return strtoupper($this->operation->method());
+        return $this->servers;
     }
 
     public function path(): PathItem
@@ -34,14 +37,9 @@ class Endpoint implements JsonSerializable
         return $this->path;
     }
 
-    public function url(): string
+    public function operation(): Operation
     {
-        return $this->server?->url().$this->path->uri();
-    }
-
-    public function deprecated(): bool
-    {
-        return $this->operation->deprecated();
+        return $this->operation;
     }
 
     public function parameters(): ?Parameters
@@ -58,35 +56,40 @@ class Endpoint implements JsonSerializable
         return null;
     }
 
-    public function operation(): Operation
-    {
-        return $this->operation;
-    }
-
     public function matches(RequestInterface $request): bool
     {
-        if ($this->method() !== $request->getMethod()) {
-            return false;
+        $usesHttpMethod = $this->matchingHttpMethod(
+            $this->operation()->method(),
+            $request->getMethod(),
+        );
+
+        if ($usesHttpMethod) {
+            $request = $request->withUri($request->getUri()->withQuery(''));
+
+            foreach ($this->servers() ?? [] as $server) {
+                $usedOnServer = $this->matchingUriPattern(
+                    $server->url().$this->path()->uri(),
+                    $request->getUri()->__toString(),
+                );
+
+                if ($usedOnServer) {
+                    return true;
+                }
+            }
+
+            return $this->matchingUriPattern($this->path()->uri(), $request->getUri()->__toString());
         }
 
-        $request = $request->withUri($request->getUri()->withQuery(''));
-
-        $endpointUrl = $this->url();
-        $requestUrl = (string) $request->getUri();
-
-        $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $endpointUrl);
-        $pattern = "^$pattern$";
-
-        return (bool) preg_match("#$pattern#", $requestUrl);
+        return false;
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'server' => $this->server?->jsonSerialize(),
-            'path' => $this->path->jsonSerialize(),
-            'method' => $this->operation->method(),
+            'servers' => $this->servers?->jsonSerialize(),
             'uri' => $this->path->uri(),
+            'method' => $this->operation->method(),
+            'path' => $this->path->jsonSerialize(),
             'operation' => $this->operation->jsonSerialize(),
         ];
     }

@@ -3,10 +3,7 @@
 namespace Apiboard\OpenAPI;
 
 use Apiboard\OpenAPI\Structure\Document;
-use Apiboard\OpenAPI\Structure\Server;
-use Apiboard\OpenAPI\Structure\Servers;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\UriInterface;
 
 class EndpointMatcher
 {
@@ -26,30 +23,12 @@ class EndpointMatcher
                 continue;
             }
 
-            $server = $this->serverForUri(
-                $operation->servers() ?? $path->servers() ?? $this->specification->servers(),
-                $request->getUri(),
-            );
+            $servers = $operation->servers() ?? $path->servers() ?? $this->specification->servers();
 
-            $endpoint = new Endpoint($server, $path, $operation);
+            $endpoint = new Endpoint($servers, $path, $operation);
 
             if ($endpoint->matches($request)) {
                 return $endpoint;
-            }
-        }
-
-        return null;
-    }
-
-    protected function serverForUri(?Servers $servers, UriInterface $uri): ?Server
-    {
-        if ($servers === null) {
-            return null;
-        }
-
-        foreach ($servers as $server) {
-            if (str_contains((string) $uri, $server->url())) {
-                return $server;
             }
         }
 

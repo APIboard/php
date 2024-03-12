@@ -16,8 +16,8 @@ it('can match request to root operation without fixed path', function () {
     $result = endpointMatcher()->matchingIn($request);
 
     expect($result)->toBeInstanceOf(Endpoint::class);
-    expect($result->method())->toBe('GET');
-    expect($result->url())->toBe('/');
+    expect($result->operation()->method())->toBe('get');
+    expect($result->path()->uri())->toBe('/');
 });
 
 it('can match request to endpoint for operation without path parameters', function () {
@@ -29,8 +29,8 @@ it('can match request to endpoint for operation without path parameters', functi
     $result = endpointMatcher()->matchingIn($request);
 
     expect($result)->toBeInstanceOf(Endpoint::class);
-    expect($result->method())->toBe('GET');
-    expect($result->url())->toBe('/no-path-parameters');
+    expect($result->operation()->method())->toBe('get');
+    expect($result->path()->uri())->toBe('/no-path-parameters');
 });
 
 it('can match request to endpoint for operation with a path parameter', function () {
@@ -42,8 +42,8 @@ it('can match request to endpoint for operation with a path parameter', function
     $result = endpointMatcher()->matchingIn($request);
 
     expect($result)->toBeInstanceOf(Endpoint::class);
-    expect($result->method())->toBe('POST');
-    expect($result->url())->toBe('/path/{parameter}');
+    expect($result->operation()->method())->toBe('post');
+    expect($result->path()->uri())->toBe('/path/{parameter}');
 });
 
 it('can match request to endpoint for operation with a server for the path', function () {
@@ -55,8 +55,8 @@ it('can match request to endpoint for operation with a server for the path', fun
     $result = endpointMatcher()->matchingIn($request);
 
     expect($result)->toBeInstanceOf(Endpoint::class);
-    expect($result->method())->toBe('GET');
-    expect($result->url())->toBe('/prefix/path');
+    expect($result->operation()->method())->toBe('get');
+    expect($result->path()->uri())->toBe('/path');
 });
 
 it('can match request to endpoint for operation with a server for the operation', function () {
@@ -68,8 +68,8 @@ it('can match request to endpoint for operation with a server for the operation'
     $result = endpointMatcher()->matchingIn($request);
 
     expect($result)->toBeInstanceOf(Endpoint::class);
-    expect($result->method())->toBe('GET');
-    expect($result->url())->toBe('/prefix/operation');
+    expect($result->operation()->method())->toBe('get');
+    expect($result->path()->uri())->toBe('/operation');
 });
 
 it('does not match request to endpoint when no path can be matched', function () {
