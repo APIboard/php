@@ -4,8 +4,6 @@ namespace Apiboard;
 
 use Apiboard\Checks\Check;
 use Apiboard\Checks\Checks;
-use Apiboard\Checks\UsedEndpoint;
-use Apiboard\Checks\UsedParameters;
 use Apiboard\Logging\Logger;
 use Apiboard\Logging\NullLogger;
 use Apiboard\Logging\Sampler;
@@ -27,16 +25,13 @@ class Apiboard
 
     protected Closure $logResolverCallback;
 
-    public function __construct(array $apis)
+    public function __construct(array $apis, array $checks = [])
     {
         $this->beforeRunningChecks = fn () => null;
         $this->runChecksCallback = fn (Checks $checks) => $checks->__invoke();
         $this->logResolverCallback = fn () => new NullLogger;
         $this->apis = $apis;
-        $this->checks = [
-            new UsedEndpoint,
-            new UsedParameters,
-        ];
+        $this->checks = $checks;
     }
 
     public function disable(): void
