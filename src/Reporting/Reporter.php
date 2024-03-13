@@ -2,13 +2,9 @@
 
 namespace Apiboard\Reporting;
 
+use Apiboard\Reporting\Reports\Report;
+
 interface Reporter
 {
-    /**
-     * @param  class-string<Report>[]  ...$only
-     * @return iterable<array-key,Report>
-     */
-    public function reports(string ...$only): iterable;
-
     public function write(Report $report): void;
 }
