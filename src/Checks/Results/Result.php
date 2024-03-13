@@ -2,21 +2,19 @@
 
 namespace Apiboard\Checks\Results;
 
-use Apiboard\Api;
-use Apiboard\Checks\Check;
 use DateTime;
 
 class Result
 {
-    protected Api $api;
+    protected string $api;
 
-    protected Check $check;
+    protected string $check;
 
     protected array $data;
 
     protected DateTime $loggedAt;
 
-    public function __construct(Api $api, Check $check, array $data)
+    public function __construct(string $api, string $check, array $data)
     {
         $this->api = $api;
         $this->check = $check;
@@ -24,12 +22,12 @@ class Result
         $this->loggedAt = new DateTime();
     }
 
-    public function api(): Api
+    public function api(): string
     {
         return $this->api;
     }
 
-    public function check(): Check
+    public function check(): string
     {
         return $this->check;
     }

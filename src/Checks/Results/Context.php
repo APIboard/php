@@ -32,7 +32,7 @@ class Context
 
     public function addResult(Check $check, array $data): void
     {
-        $this->results[] = new Result($this->api, $check, $data);
+        $this->results[] = new Result($this->api->id(), $check->id(), $data);
     }
 
     /**
