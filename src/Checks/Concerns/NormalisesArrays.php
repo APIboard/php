@@ -12,6 +12,7 @@ trait NormalisesArrays
             foreach ($keysToRemove as $keyToRemove) {
                 if (fnmatch($keyToRemove, $key)) {
                     unset($data[$key]);
+
                     continue;
                 }
             }

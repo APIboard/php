@@ -4,6 +4,7 @@ namespace Apiboard\Logging;
 
 use Apiboard\Checks\Results\Context;
 use Apiboard\Reporting\Reporter;
+use DateTime;
 
 class NullLogger implements Logger
 {
@@ -16,7 +17,7 @@ class NullLogger implements Logger
     {
     }
 
-    public function trim(): void
+    public function trim(DateTime $before): void
     {
     }
 }

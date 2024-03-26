@@ -37,7 +37,7 @@ class ArrayLogger implements Logger
         $this->logged[] = $context;
     }
 
-    public function trim(): void
+    public function trim(DateTime $before): void
     {
     }
 }
