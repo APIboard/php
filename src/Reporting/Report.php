@@ -1,6 +1,6 @@
 <?php
 
-namespace Apiboard\Reporting\Reports;
+namespace Apiboard\Reporting;
 
 use Apiboard\Checks\Results\Result;
 

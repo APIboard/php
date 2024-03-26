@@ -2,8 +2,6 @@
 
 namespace Apiboard\Reporting;
 
-use Apiboard\Reporting\Reports\Report;
-
 interface Reporter
 {
     /**
