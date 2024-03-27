@@ -2,6 +2,7 @@
 
 use Apiboard\Checks\Check;
 use Apiboard\Checks\Results\Context;
+use Apiboard\Checks\Results\Result;
 use Apiboard\Logging\Logger;
 use Apiboard\Reporting\Reporter;
 
@@ -51,7 +52,7 @@ class TestCheck implements Check
 
     public function run(Context $context): Context
     {
-        $context->addResult($this, [], []);
+        $context->add(new Result($this->id(), []));
 
         return $context;
     }
