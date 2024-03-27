@@ -2,7 +2,7 @@
 
 namespace Apiboard\Reporting;
 
-use Apiboard\Checks\Results\Result;
+use Apiboard\Checks\Results\Context;
 
 interface Report
 {
@@ -12,5 +12,5 @@ interface Report
 
     public function state(): array;
 
-    public function include(Result ...$results): void;
+    public function include(Context ...$contexts): void;
 }
