@@ -13,7 +13,7 @@ class NullLogger implements Logger
         return 0;
     }
 
-    public function process(Context $context): void
+    public function log(Context $context): void
     {
     }
 

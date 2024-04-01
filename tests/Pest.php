@@ -33,7 +33,7 @@ class ArrayLogger implements Logger
         return count($this->logged);
     }
 
-    public function process(Context $context): void
+    public function log(Context $context): void
     {
         $this->logged[] = $context;
     }

@@ -71,7 +71,7 @@ class Checks
             $check->run($context);
         }
 
-        $this->logger->process($context);
+        $this->logger->log($context);
     }
 
     protected function callIfExists(Check $check, string $method): void
