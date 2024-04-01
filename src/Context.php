@@ -2,14 +2,11 @@
 
 namespace Apiboard;
 
-use Apiboard\Checks\Concerns\NormalisesArrays;
 use Apiboard\Checks\Results\Result;
 use Apiboard\OpenAPI\Endpoint;
 
 class Context
 {
-    use NormalisesArrays;
-
     protected Api $api;
 
     protected ?Endpoint $endpoint;
@@ -69,5 +66,26 @@ class Context
     public function results(): array
     {
         return $this->results;
+    }
+
+    protected function normaliseArray(array $data, string ...$keysToRemove): array
+    {
+        ksort($array);
+
+        foreach ($data as $key => $value) {
+            foreach ($keysToRemove as $keyToRemove) {
+                if (fnmatch($keyToRemove, $key)) {
+                    unset($data[$key]);
+
+                    continue;
+                }
+            }
+
+            if (is_array($value)) {
+                $data[$key] = $this->normaliseArray($value, ...$keysToRemove);
+            }
+        }
+
+        return $data;
     }
 }
