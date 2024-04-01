@@ -12,11 +12,6 @@ class UsedServer implements Check
     use AcceptsRequest;
     use MatchesStrings;
 
-    public function id(): string
-    {
-        return 'used-server';
-    }
-
     public function run(Context $context): Context
     {
         $endpoint = $context->endpoint();
