@@ -1,8 +1,8 @@
 <?php
 
 use Apiboard\Checks\Check;
-use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\Result;
+use Apiboard\Context;
 use Apiboard\Logging\Logger;
 use Apiboard\Reporting\Reporter;
 

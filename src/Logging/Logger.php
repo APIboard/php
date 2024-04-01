@@ -2,7 +2,7 @@
 
 namespace Apiboard\Logging;
 
-use Apiboard\Checks\Results\Context;
+use Apiboard\Context;
 use Apiboard\Reporting\Reporter;
 use DateTime;
 

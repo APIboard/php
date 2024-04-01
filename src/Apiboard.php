@@ -3,7 +3,6 @@
 namespace Apiboard;
 
 use Apiboard\Checks\Check;
-use Apiboard\Checks\Checks;
 use Apiboard\Logging\Logger;
 use Apiboard\Logging\NullLogger;
 use Apiboard\Logging\Sampler;

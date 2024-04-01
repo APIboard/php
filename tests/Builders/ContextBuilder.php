@@ -3,7 +3,7 @@
 namespace Tests\Builders;
 
 use Apiboard\Api;
-use Apiboard\Checks\Results\Context;
+use Apiboard\Context;
 use Apiboard\OpenAPI\Endpoint;
 
 class ContextBuilder extends Builder

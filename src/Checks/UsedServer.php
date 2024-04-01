@@ -3,8 +3,8 @@
 namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
-use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\ServerUsed;
+use Apiboard\Context;
 use Apiboard\OpenAPI\Concerns\MatchesStrings;
 
 class UsedServer implements Check

@@ -1,9 +1,8 @@
 <?php
 
-namespace Apiboard\Checks;
+namespace Apiboard;
 
-use Apiboard\Api;
-use Apiboard\Checks\Results\Context;
+use Apiboard\Checks\Check;
 use Apiboard\Logging\Logger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

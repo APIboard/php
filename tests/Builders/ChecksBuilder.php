@@ -3,7 +3,7 @@
 namespace Tests\Builders;
 
 use Apiboard\Api;
-use Apiboard\Checks\Checks;
+use Apiboard\Checks;
 use Apiboard\Logging\Logger;
 use Apiboard\Logging\NullLogger;
 use Psr\Http\Message\RequestInterface;

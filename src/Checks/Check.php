@@ -2,7 +2,7 @@
 
 namespace Apiboard\Checks;
 
-use Apiboard\Checks\Results\Context;
+use Apiboard\Context;
 
 interface Check
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Apiboard\Checks\Results;
+namespace Apiboard;
 
-use Apiboard\Api;
 use Apiboard\Checks\Concerns\NormalisesArrays;
+use Apiboard\Checks\Results\Result;
 use Apiboard\OpenAPI\Endpoint;
 
 class Context

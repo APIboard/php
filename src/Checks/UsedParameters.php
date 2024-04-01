@@ -3,8 +3,8 @@
 namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
-use Apiboard\Checks\Results\Context;
 use Apiboard\Checks\Results\ParameterUsed;
+use Apiboard\Context;
 
 class UsedParameters implements Check
 {

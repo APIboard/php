@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Checks;
+namespace Tests;
 
 use Apiboard\Api;
 use Psr\Http\Message\RequestInterface;

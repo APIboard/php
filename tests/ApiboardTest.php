@@ -1,7 +1,7 @@
 <?php
 
 use Apiboard\Apiboard;
-use Apiboard\Checks\Checks;
+use Apiboard\Checks;
 use Tests\Builders\PsrRequestBuilder;
 use Tests\Builders\PsrResponseBuilder;
 
