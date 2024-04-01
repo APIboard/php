@@ -32,7 +32,7 @@ class UsedParameters implements Check
             };
 
             if ($isUsed) {
-                $context->add(new ParameterUsed($parameter));
+                $context->add(new ParameterUsed($parameter->name(), $parameter->in()));
             }
         }
 

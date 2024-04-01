@@ -32,7 +32,7 @@ class UsedServer implements Check
             );
 
             if ($usedServer) {
-                $context->add(new ServerUsed($server));
+                $context->add(new ServerUsed($server->url()));
             }
         }
 

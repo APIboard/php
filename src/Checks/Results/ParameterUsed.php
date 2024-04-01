@@ -2,28 +2,25 @@
 
 namespace Apiboard\Checks\Results;
 
-use Apiboard\OpenAPI\Structure\Parameter;
-use DateTime;
-
 class ParameterUsed implements Result
 {
-    protected Parameter $parameter;
+    protected string $name;
 
-    protected DateTime $loggedAt;
+    protected string $in;
 
-    public function __construct(Parameter $parameter)
+    public function __construct(string $name, string $in)
     {
-        $this->parameter = $parameter;
-        $this->loggedAt = new DateTime();
+        $this->name = $name;
+        $this->in = $in;
     }
 
-    public function data(): array
+    public function name(): string
     {
-        return $this->parameter->jsonSerialize();
+        return $this->name;
     }
 
-    public function loggedAt(): DateTime
+    public function in(): string
     {
-        return $this->loggedAt;
+        return $this->in;
     }
 }

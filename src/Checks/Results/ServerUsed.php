@@ -2,28 +2,17 @@
 
 namespace Apiboard\Checks\Results;
 
-use Apiboard\OpenAPI\Structure\Server;
-use DateTime;
-
 class ServerUsed implements Result
 {
-    protected Server $server;
+    protected string $url;
 
-    protected DateTime $loggedAt;
-
-    public function __construct(Server $server)
+    public function __construct(string $url)
     {
-        $this->server = $server;
-        $this->loggedAt = new DateTime();
+        $this->url = $url;
     }
 
-    public function data(): array
+    public function url(): string
     {
-        return $this->server->jsonSerialize();
-    }
-
-    public function loggedAt(): DateTime
-    {
-        return $this->loggedAt;
+        return $this->url;
     }
 }
