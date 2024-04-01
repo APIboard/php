@@ -4,7 +4,7 @@ namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
-use Apiboard\Checks\Results\Result;
+use Apiboard\Checks\Results\ParameterUsed;
 
 class UsedParameters implements Check
 {
@@ -32,7 +32,7 @@ class UsedParameters implements Check
             };
 
             if ($isUsed) {
-                $context->add(new Result($this->id(), $parameter->jsonSerialize()));
+                $context->add(new ParameterUsed($parameter));
             }
         }
 

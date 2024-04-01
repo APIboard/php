@@ -52,7 +52,25 @@ class TestCheck implements Check
 
     public function run(Context $context): Context
     {
-        $context->add(new Result($this->id(), []));
+        $result = new class implements Result
+        {
+            public function check(): Check
+            {
+                return new TestCheck();
+            }
+
+            public function data(): array
+            {
+                return [];
+            }
+
+            public function loggedAt(): DateTime
+            {
+                return new DateTime();
+            }
+        };
+
+        $context->add($result);
 
         return $context;
     }

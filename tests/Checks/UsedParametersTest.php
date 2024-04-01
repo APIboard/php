@@ -2,7 +2,7 @@
 
 namespace Tests\Checks;
 
-use Apiboard\Checks\Results\Result;
+use Apiboard\Checks\Results\ParameterUsed;
 use Apiboard\Checks\UsedParameters;
 use Tests\Builders\ContextBuilder;
 use Tests\Builders\EndpointBuilder;
@@ -53,7 +53,7 @@ it('returns results when there are query parameters used', function () {
     $context = $check->run($context);
 
     expect($context->results())->toHaveCount(1);
-    expect($context->results()[0])->toBeInstanceOf(Result::class);
+    expect($context->results()[0])->toBeInstanceOf(ParameterUsed::class);
 });
 
 it('returns results when there are header parameters used', function () {
@@ -75,7 +75,7 @@ it('returns results when there are header parameters used', function () {
     $context = $check->run($context);
 
     expect($context->results())->toHaveCount(1);
-    expect($context->results()[0])->toBeInstanceOf(Result::class);
+    expect($context->results()[0])->toBeInstanceOf(ParameterUsed::class);
 });
 
 it('returns results when there are path parameters defined on the endpoint', function () {
@@ -96,5 +96,5 @@ it('returns results when there are path parameters defined on the endpoint', fun
     $context = $check->run($context);
 
     expect($context->results())->toHaveCount(1);
-    expect($context->results()[0])->toBeInstanceOf(Result::class);
+    expect($context->results()[0])->toBeInstanceOf(ParameterUsed::class);
 });

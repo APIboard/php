@@ -4,7 +4,7 @@ namespace Apiboard\Checks;
 
 use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\Context;
-use Apiboard\Checks\Results\Result;
+use Apiboard\Checks\Results\ServerUsed;
 use Apiboard\OpenAPI\Concerns\MatchesStrings;
 
 class UsedServer implements Check
@@ -32,7 +32,7 @@ class UsedServer implements Check
             );
 
             if ($usedServer) {
-                $context->add(new Result($this->id(), $server->jsonSerialize()));
+                $context->add(new ServerUsed($server));
             }
         }
 
