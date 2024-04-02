@@ -23,4 +23,17 @@ class ParameterUsed implements Result
     {
         return $this->in;
     }
+
+    public function state(): array
+    {
+        return [
+            'name' => $this->name,
+            'in' => $this->in,
+        ];
+    }
+
+    public static function fromState(array $state): static
+    {
+        return new static($state['name'], $state['in']);
+    }
 }

@@ -15,4 +15,16 @@ class ServerUsed implements Result
     {
         return $this->url;
     }
+
+    public function state(): array
+    {
+        return [
+            'url' => $this->url,
+        ];
+    }
+
+    public static function fromState(array $state): static
+    {
+        return new static($state['url']);
+    }
 }

@@ -59,7 +59,7 @@ class TestCheck implements Check
                 return new TestCheck();
             }
 
-            public function data(): array
+            public function state(): array
             {
                 return [];
             }
