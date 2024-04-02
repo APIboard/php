@@ -19,7 +19,7 @@ class Context
         $this->endpoint = $endpoint;
     }
 
-    public function id(): string
+    public function hash(): string
     {
         $normalisedEndpoint = json_encode(
             $this->normaliseArray(

@@ -28,7 +28,7 @@ class OperationUsage implements Report
     public function include(Context ...$contexts): void
     {
         foreach ($contexts as $context) {
-            $state = $this->state[$context->id()] ??= [
+            $state = $this->state[$context->hash()] ??= [
                 'api' => $context->api()->id(),
                 'method' => $context->endpoint()->operation()->method(),
                 'uri' => $context->endpoint()->path()->uri(),
@@ -45,7 +45,7 @@ class OperationUsage implements Report
                 $state['servers'][] = $result->url();
             }
 
-            $this->state[$context->id()] = $state;
+            $this->state[$context->hash()] = $state;
         }
     }
 
