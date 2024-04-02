@@ -2,9 +2,11 @@
 
 namespace Apiboard\Reporting;
 
+use Apiboard\Reporting\Reports\Report;
+
 class NullReporter implements Reporter
 {
-    public function reports(string ...$ids): array
+    public function reports(): array
     {
         return [];
     }
