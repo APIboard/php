@@ -4,6 +4,7 @@ namespace Apiboard;
 
 use Apiboard\Checks\Results\Result;
 use Apiboard\OpenAPI\Endpoint;
+use DateTime;
 
 class Context
 {
@@ -11,12 +12,15 @@ class Context
 
     protected ?Endpoint $endpoint;
 
+    protected DateTime $initialisedAt;
+
     protected array $results = [];
 
-    public function __construct(Api $api, ?Endpoint $endpoint)
+    public function __construct(Api $api, ?Endpoint $endpoint, ?DateTime $initialisedAt = null)
     {
         $this->api = $api;
         $this->endpoint = $endpoint;
+        $this->initialisedAt = $initialisedAt ?? new DateTime;
     }
 
     public function hash(): string
@@ -51,6 +55,11 @@ class Context
     public function endpoint(): ?Endpoint
     {
         return $this->endpoint;
+    }
+
+    public function initialisedAt(): DateTime
+    {
+        return $this->initialisedAt;
     }
 
     public function add(Result ...$results): void
