@@ -54,9 +54,9 @@ class TestCheck implements Check
     {
         $result = new class implements Result
         {
-            public function check(): Check
+            public static function fromState(array $state): static
             {
-                return new TestCheck();
+                return new self;
             }
 
             public function state(): array
@@ -66,7 +66,7 @@ class TestCheck implements Check
 
             public function loggedAt(): DateTime
             {
-                return new DateTime();
+                return new DateTime;
             }
         };
 
