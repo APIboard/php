@@ -34,7 +34,7 @@ class Api
 
     public function specification(): Document
     {
-        return $this->document ??= (new OpenAPI())->parse($this->openapi);
+        return $this->document ??= (new OpenAPI)->parse($this->openapi);
     }
 
     public function matchingEndpoint(RequestInterface $request): ?Endpoint

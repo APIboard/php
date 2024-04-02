@@ -8,12 +8,12 @@ use Apiboard\Reporting\Reporter;
 
 function arrayLogger(): ArrayLogger
 {
-    return new ArrayLogger();
+    return new ArrayLogger;
 }
 
 function testCheck(): TestCheck
 {
-    return new TestCheck();
+    return new TestCheck;
 }
 
 class ArrayLogger implements Logger

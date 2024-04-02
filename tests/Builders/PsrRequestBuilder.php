@@ -75,7 +75,7 @@ class PsrRequestBuilder extends Builder
 
     public function make(): RequestInterface
     {
-        $request = (new RequestFactory())
+        $request = (new RequestFactory)
             ->createRequest($this->method, $this->uri.$this->query);
 
         foreach ($this->headers as $name => $value) {

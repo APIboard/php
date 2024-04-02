@@ -44,7 +44,7 @@ class ChecksBuilder extends Builder
     {
         return new Checks(
             $this->api ?? ApiBuilder::new()->make(),
-            $this->logger ?? new NullLogger(),
+            $this->logger ?? new NullLogger,
             $this->request ?? PsrRequestBuilder::new()->make(),
             $this->response,
         );

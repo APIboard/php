@@ -11,7 +11,7 @@ use Tests\Builders\PsrRequestBuilder;
 
 function usedParameters()
 {
-    return new UsedParameters();
+    return new UsedParameters;
 }
 
 it('returns no results when there are no query or header parameters used', function () {
