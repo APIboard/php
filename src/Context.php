@@ -79,7 +79,7 @@ class Context
 
     protected function normaliseArray(array $data, string ...$keysToRemove): array
     {
-        ksort($array);
+        ksort($data);
 
         foreach ($data as $key => $value) {
             foreach ($keysToRemove as $keyToRemove) {
