@@ -40,13 +40,14 @@ class ParameterUsage implements Report
                     'operations' => [],
                 ];
 
-                $state['operations'] = array_unique([
-                    ...$state['operations'],
-                    [
-                        'method' => $context->endpoint()->operation()->method(),
-                        'uri' => $context->endpoint()->path()->uri(),
-                    ],
-                ]);
+                $operation = [
+                    'method' => $context->endpoint()->operation()->method(),
+                    'uri' => $context->endpoint()->path()->uri(),
+                ];
+
+                if (in_array($operation, $state['operations']) === false) {
+                    $state['operations'][] = $operation;
+                }
 
                 $this->state[$parameterContext] = $state;
             }
