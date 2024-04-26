@@ -8,6 +8,8 @@ use Apiboard\OpenAPI\Structure\Parameter;
 use Apiboard\OpenAPI\Structure\PathItem;
 use Apiboard\OpenAPI\Structure\Response;
 use Apiboard\OpenAPI\Structure\Schema;
+use Apiboard\OpenAPI\Structure\Server;
+use Apiboard\OpenAPI\Structure\Servers;
 use Psr\Log\LoggerInterface;
 
 class EndpointBuilder extends Builder
@@ -21,6 +23,8 @@ class EndpointBuilder extends Builder
     protected array $path = [];
 
     protected array $operation = [];
+
+    protected array $servers = [];
 
     public function method(string $method): self
     {
@@ -70,10 +74,19 @@ class EndpointBuilder extends Builder
         return $this;
     }
 
+    public function servers(Server ...$servers): self
+    {
+        foreach ($servers as $server) {
+            $this->servers[] = $server;
+        }
+
+        return $this;
+    }
+
     public function make(): Endpoint
     {
         return new Endpoint(
-            null,
+            new Servers($this->servers),
             new PathItem($this->uri, $this->path),
             new Operation($this->method, $this->operation),
         );

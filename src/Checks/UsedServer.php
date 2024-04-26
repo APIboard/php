@@ -6,6 +6,7 @@ use Apiboard\Checks\Concerns\AcceptsRequest;
 use Apiboard\Checks\Results\ServerUsed;
 use Apiboard\Context;
 use Apiboard\OpenAPI\Concerns\MatchesStrings;
+use Apiboard\OpenAPI\Structure\Server;
 
 class UsedServer implements Check
 {
@@ -21,16 +22,29 @@ class UsedServer implements Check
         }
 
         foreach ($endpoint->servers() as $server) {
+            $serverUrl = $this->serverUrl($server);
+
             $usedServer = $this->matchingUriPattern(
-                $server->url().$endpoint->path()->uri(),
+                "{$serverUrl}{$endpoint->path()->uri()}",
                 $this->request->getUri()->__toString(),
             );
 
             if ($usedServer) {
-                $context->add(new ServerUsed($server->url()));
+                $context->add(new ServerUsed($serverUrl));
             }
         }
 
         return $context;
+    }
+
+    protected function serverUrl(Server $server): string
+    {
+        $url = $server->url();
+
+        if (str_starts_with($url, '/')) {
+            return $this->request->getUri()->withPath($url)->__toString();
+        }
+
+        return $url;
     }
 }
